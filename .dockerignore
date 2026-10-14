@@ -1,0 +1,6 @@
+# 构建镜像时排除：本机跑出来的任务数据、上传的 PDF、产出的模型
+data/
+__pycache__/
+*.pyc
+*.tmp-xlsm
+*.log

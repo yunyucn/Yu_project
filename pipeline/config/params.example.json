@@ -1,0 +1,55 @@
+{
+ "company": {
+  "name": "示例公司",
+  "code": "000000.SZ",
+  "report_period": "2025-12-31",
+  "valuation_date": "2025-12-31"
+ },
+ "market": {
+  "total_shares_mn": null,
+  "float_shares_mn": null,
+  "close_price": null,
+  "hkd_cny": 0.90855,
+  "usd_cny": 7.107,
+  "history": {
+   "2020-12-31": {
+    "PE": null,
+    "PS": null,
+    "PB": null,
+    "PCF": null
+   },
+   "2021-12-31": {
+    "PE": null,
+    "PS": null,
+    "PB": null,
+    "PCF": null
+   }
+  },
+  "allow_missing_history": false
+ },
+ "reports": [
+  {
+   "pdf": "path/to/FY2021_annual.pdf",
+   "period": "2021-12-31"
+  },
+  {
+   "pdf": "path/to/FY2023_annual.pdf",
+   "period": "2023-12-31"
+  },
+  {
+   "pdf": "path/to/FY2025_annual.pdf",
+   "period": "2025-12-31"
+  }
+ ],
+ "_market_comment": "history 填 年度数据!144/145/146/148（历史 PE/PS/PB/PCF）。年报 PDF 里没有这些数，只能外部取。缺了会让 相对估值 出 #DIV/0! 且不报错，所以默认缺一项就 abort；只要绝对估值时把 allow_missing_history 设为 true。第 147 行（历史 EV/EBITDA）不是市场数据：模板用 =财务分析!D65 自己算，配置里 mode 为 formula，此处提供也会被忽略。",
+ "_comment": "reports 需覆盖 年度数据!C:H 六年。每份年报提供 2 年（期末=较新年、期初=较旧年），隔年取即可。 若 report_period=2025-12-31，则 C:H = 2020..2025，FY2021/FY2023/FY2025 三份覆盖全部六列。 缺 D:H 任一列会被 validate.py 拦截。",
+ "analyst": {
+  "营业收入增长率(2026E)": null,
+  "营业收入增长率(2027E)": null,
+  "营业成本率(2026E)": null,
+  "管理费用率(2026E)": null,
+  "研发费用率(2026E)": null,
+  "新增长期借款率(2026E)": null
+ },
+ "_analyst_comment": "这六格是预测假设，只能由人定，AI 不会替你猜。可以在 Excel 的「假设」表里直接填，也可以在这里按**项目名**填（年份不能省，省了会报错）。填了不影响数据完整性判定，但预测期不再是「零增长 + 零成本」，卡片上的 DCF 才有意义。"
+}

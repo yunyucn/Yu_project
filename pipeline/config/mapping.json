@@ -1,0 +1,1985 @@
+{
+ "version": "1.1.0",
+ "description": "年度数据 行 ↔ PDF 报表科目 映射规则。只含规则，不含任何公司数据。",
+ "template": {
+  "file": "开源_A股估值模型(非金融)_20240109043703.xlsm",
+  "sha256": "b52ab8cdcc0fdf0d3562e550d6fd8f017d3f8286f58ad4ea1d55ff123f63c155"
+ },
+ "units": {
+  "target": "百万元",
+  "pdf": "元",
+  "scale": 1e-06
+ },
+ "statements": {
+  "合并资产负债表": null,
+  "合并利润表": null,
+  "合并现金流量表": null,
+  "现金流量补充资料": null
+ },
+ "columns": {
+  "C": 0,
+  "D": 1,
+  "E": 2,
+  "F": 3,
+  "G": 4,
+  "H": 5,
+  "note": "C 最旧、H 最新；每份年报提供 2 年（期末=较新年、期初=较旧年）"
+ },
+ "a_prime": {
+  "description": "硬编码在 假设 表中、但实为年报事实的科目（A′ 类）。必须随公司更新，否则旧公司数据泄漏。",
+  "cells": {
+   "I55": "商誉",
+   "I68": "合同负债",
+   "I79": "递延所得税负债",
+   "I81": "预计负债"
+  },
+  "source_rows": {
+   "商誉": 78,
+   "合同负债": 94,
+   "递延所得税负债": 112,
+   "预计负债": 111
+  }
+ },
+ "rows": [
+  {
+   "row": 3,
+   "label": "一、营业收入",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "营业收入"
+   ],
+   "index": 0
+  },
+  {
+   "row": 4,
+   "label": "营业收入",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "营业收入"
+   ],
+   "index": 0
+  },
+  {
+   "row": 5,
+   "label": "减：营业成本",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "营业成本"
+   ],
+   "index": 0
+  },
+  {
+   "row": 6,
+   "label": "减：营业税金及附加",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "营业税金及附加",
+    "税金及附加"
+   ],
+   "index": 0
+  },
+  {
+   "row": 7,
+   "label": "减：销售费用（营业费用）",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "销售费用"
+   ],
+   "index": 0
+  },
+  {
+   "row": 8,
+   "label": "减：管理费用",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "管理费用"
+   ],
+   "index": 0
+  },
+  {
+   "row": 9,
+   "label": "减：研发费用",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "研发费用"
+   ],
+   "index": 0
+  },
+  {
+   "row": 10,
+   "label": "减：财务费用",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "财务费用"
+   ],
+   "index": 0
+  },
+  {
+   "row": 11,
+   "label": "利息支出",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "利息支出",
+    "利息费用"
+   ],
+   "index": 0
+  },
+  {
+   "row": 12,
+   "label": "减：利息收入",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "利息收入"
+   ],
+   "index": 0
+  },
+  {
+   "row": 13,
+   "label": "减：资产减值损失",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "资产减值损失"
+   ],
+   "index": 0
+  },
+  {
+   "row": 14,
+   "label": "减：信用减值损失",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "信用减值损失"
+   ],
+   "index": 0
+  },
+  {
+   "row": 15,
+   "label": "加：公允价值变动净收益",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "公允价值变动净收益",
+    "公允价值变动收益"
+   ],
+   "index": 0
+  },
+  {
+   "row": 16,
+   "label": "加：其他收益",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "其他收益"
+   ],
+   "index": 0
+  },
+  {
+   "row": 17,
+   "label": "加：投资净收益",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "投资净收益",
+    "投资收益"
+   ],
+   "index": 0
+  },
+  {
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "对联营企业和合营企业的投资收益",
+    "其中：对联营企业和合营企业的投资收益",
+    "企业的投资收益",
+    "其中：对联营企业和合营"
+   ],
+   "row": 18,
+   "label": "其中：对联营合营企业投资收益",
+   "index": 0
+  },
+  {
+   "row": 19,
+   "label": "加：资产处置收益",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "资产处置收益"
+   ],
+   "index": 0
+  },
+  {
+   "row": 20,
+   "label": "二、营业利润",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "营业利润"
+   ],
+   "index": 0
+  },
+  {
+   "row": 21,
+   "label": "营业利润",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "营业利润"
+   ],
+   "index": 0
+  },
+  {
+   "row": 22,
+   "label": "加：营业外收入",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "营业外收入"
+   ],
+   "index": 0
+  },
+  {
+   "row": 23,
+   "label": "减：营业外支出",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "营业外支出"
+   ],
+   "index": 0
+  },
+  {
+   "row": 24,
+   "label": "三、利润总额",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "利润总额"
+   ],
+   "index": 0
+  },
+  {
+   "row": 25,
+   "label": "利润总额",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "利润总额"
+   ],
+   "index": 0
+  },
+  {
+   "row": 26,
+   "label": "减：所得税",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "所得税",
+    "所得税费用"
+   ],
+   "index": 0
+  },
+  {
+   "row": 28,
+   "label": "净利润",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "净利润"
+   ],
+   "index": 0
+  },
+  {
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "2.少数股东损益",
+    "少数股东损益"
+   ],
+   "row": 29,
+   "label": "减：少数股东损益",
+   "index": 0
+  },
+  {
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "1.归属于母公司股东的净利润",
+    "归属于母公司股东的净利润",
+    "归属于母公司所有者的净利润",
+    "1.归属于母公司所有者的净利润"
+   ],
+   "row": 30,
+   "label": "归属于母公司所有者净利润",
+   "index": 0,
+   "note": "norm() 只剥掉列表序号的数字、留下点号（'1.归属于母公司所有者的净利润' -> '.归属于母公司所有者的净利润'），所以带 '1.' 的别名必须照原样写全，否则对不上。见 docs/08_ 的已知问题。"
+  },
+  {
+   "row": 31,
+   "label": "每股EPS",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "基本每股收益",
+    "（一）基本每股收益"
+   ],
+   "index": 0,
+   "unit": "元/股",
+   "scale": 1.0,
+   "note": "每股指标，不做元->百万元换算。原模板该行为 0.48/0.31/0.6 等元/股值。"
+  },
+  {
+   "value": null,
+   "source": "利润分配",
+   "field": "每10股派息数",
+   "unit": "元",
+   "scale": 0.1,
+   "row": 33,
+   "label": "其中：每股派现",
+   "mode": "const"
+  },
+  {
+   "value": 0.0,
+   "source": "利润分配",
+   "field": "每10股送红股数",
+   "unit": "股",
+   "scale": 0.1,
+   "row": 34,
+   "label": "其中：每股红股",
+   "mode": "const"
+  },
+  {
+   "value": 0.0,
+   "source": "利润分配",
+   "field": "每10股转增数",
+   "unit": "股",
+   "scale": 0.1,
+   "row": 35,
+   "label": "其中：每股转增",
+   "mode": "const"
+  },
+  {
+   "row": 36,
+   "label": "其中：每股派现（中报）",
+   "mode": "const",
+   "source": "利润分配",
+   "field": "每10股派息数（中期）",
+   "unit": "元",
+   "scale": 0.1,
+   "value": null,
+   "optional": true,
+   "note": "中期分红只在半年报里披露，年报没有。取不到就留空并进待补清单；写死 0 会把有中期分红的公司静默抹平。"
+  },
+  {
+   "row": 37,
+   "label": "其中：每股红股（中报）",
+   "mode": "const",
+   "source": "利润分配",
+   "field": "每10股送红股数（中期）",
+   "unit": "股",
+   "scale": 0.1,
+   "value": null,
+   "optional": true,
+   "note": "中期分红只在半年报里披露，年报没有。取不到就留空并进待补清单；写死 0 会把有中期分红的公司静默抹平。"
+  },
+  {
+   "row": 38,
+   "label": "其中：每股转增（中报）",
+   "mode": "const",
+   "source": "利润分配",
+   "field": "每10股转增数（中期）",
+   "unit": "股",
+   "scale": 0.1,
+   "value": null,
+   "optional": true,
+   "note": "中期分红只在半年报里披露，年报没有。取不到就留空并进待补清单；写死 0 会把有中期分红的公司静默抹平。"
+  },
+  {
+   "row": 43,
+   "label": "货币资金",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "货币资金"
+   ],
+   "index": 0
+  },
+  {
+   "row": 44,
+   "label": "交易性金融资产",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "交易性金融资产"
+   ],
+   "index": 0
+  },
+  {
+   "row": 45,
+   "label": "衍生金融资产",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "衍生金融资产"
+   ],
+   "index": 0
+  },
+  {
+   "row": 46,
+   "label": "应收票据",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "应收票据"
+   ],
+   "index": 0
+  },
+  {
+   "row": 47,
+   "label": "应收账款",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "应收账款"
+   ],
+   "index": 0
+  },
+  {
+   "row": 48,
+   "label": "应收股利",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "应收股利"
+   ],
+   "index": 0
+  },
+  {
+   "row": 49,
+   "label": "应收利息",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "应收利息"
+   ],
+   "index": 0
+  },
+  {
+   "op": "sum",
+   "rows": [
+    46,
+    47
+   ],
+   "note": "应收票据及应收账款 = 应收票据 + 应收账款",
+   "row": 50,
+   "label": "应收票据及应收账款",
+   "mode": "calc"
+  },
+  {
+   "row": 51,
+   "label": "应收款项融资",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "应收款项融资"
+   ],
+   "index": 0
+  },
+  {
+   "row": 52,
+   "label": "其他应收款（含应收股利、应收利息和其他应收账款）",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "其他应收款"
+   ],
+   "index": 0
+  },
+  {
+   "row": 53,
+   "label": "预付款项",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "预付款项"
+   ],
+   "index": 0
+  },
+  {
+   "row": 54,
+   "label": "存货",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "存货"
+   ],
+   "index": 0
+  },
+  {
+   "row": 55,
+   "label": "合同资产",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "合同资产"
+   ],
+   "index": 0
+  },
+  {
+   "row": 56,
+   "label": "划分为持有待售的资产",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "划分为持有待售的资产",
+    "持有待售资产"
+   ],
+   "index": 0
+  },
+  {
+   "row": 57,
+   "label": "一年内到期的非流动资产",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "年内到期的非流动资产"
+   ],
+   "index": 0
+  },
+  {
+   "row": 58,
+   "label": "其他流动资产",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "其他流动资产"
+   ],
+   "index": 0
+  },
+  {
+   "row": 59,
+   "label": "流动资产合计",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "流动资产合计"
+   ],
+   "index": 0
+  },
+  {
+   "row": 61,
+   "label": "债权投资",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "债权投资"
+   ],
+   "index": 0
+  },
+  {
+   "row": 62,
+   "label": "其他债权投资",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "其他债权投资"
+   ],
+   "index": 0
+  },
+  {
+   "row": 63,
+   "label": "可供出售金融资产",
+   "mode": "zero",
+   "value": 0.0,
+   "note": "PDF 无此项（旧准则科目或本公司无），写 0"
+  },
+  {
+   "row": 64,
+   "label": "其他权益工具投资",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "其他权益工具投资"
+   ],
+   "index": 0
+  },
+  {
+   "row": 65,
+   "label": "持有至到期投资",
+   "mode": "zero",
+   "value": 0.0,
+   "note": "PDF 无此项（旧准则科目或本公司无），写 0"
+  },
+  {
+   "row": 66,
+   "label": "其他非流动金融资产",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "其他非流动金融资产"
+   ],
+   "index": 0
+  },
+  {
+   "row": 67,
+   "label": "投资性房地产",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "投资性房地产"
+   ],
+   "index": 0
+  },
+  {
+   "row": 68,
+   "label": "长期股权投资",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "长期股权投资"
+   ],
+   "index": 0
+  },
+  {
+   "row": 69,
+   "label": "固定资产",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "固定资产"
+   ],
+   "index": 0
+  },
+  {
+   "row": 70,
+   "label": "工程物资",
+   "mode": "zero",
+   "value": 0.0,
+   "note": "PDF 无此项（旧准则科目或本公司无），写 0"
+  },
+  {
+   "row": 71,
+   "label": "在建工程",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "在建工程"
+   ],
+   "index": 0
+  },
+  {
+   "row": 72,
+   "label": "使用权资产",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "使用权资产"
+   ],
+   "index": 0
+  },
+  {
+   "row": 73,
+   "label": "固定资产清理",
+   "mode": "zero",
+   "value": 0.0,
+   "note": "PDF 无此项（旧准则科目或本公司无），写 0"
+  },
+  {
+   "row": 74,
+   "label": "生产性生物资产",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "生产性生物资产"
+   ],
+   "index": 0
+  },
+  {
+   "row": 75,
+   "label": "油气资产",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "油气资产"
+   ],
+   "index": 0
+  },
+  {
+   "row": 76,
+   "label": "无形资产",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "无形资产"
+   ],
+   "index": 0
+  },
+  {
+   "row": 77,
+   "label": "开发支出",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "开发支出"
+   ],
+   "index": 0
+  },
+  {
+   "row": 78,
+   "label": "商誉",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "商誉"
+   ],
+   "index": 0
+  },
+  {
+   "row": 79,
+   "label": "长期待摊费用",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "长期待摊费用"
+   ],
+   "index": 0
+  },
+  {
+   "row": 80,
+   "label": "长期应收款",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "长期应收款"
+   ],
+   "index": 0
+  },
+  {
+   "row": 81,
+   "label": "递延所得税资产",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "递延所得税资产"
+   ],
+   "index": 0
+  },
+  {
+   "row": 82,
+   "label": "其他非流动资产",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "其他非流动资产"
+   ],
+   "index": 0
+  },
+  {
+   "row": 83,
+   "label": "非流动资产合计",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "非流动资产合计"
+   ],
+   "index": 0
+  },
+  {
+   "row": 85,
+   "label": "资产总计",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "资产总计"
+   ],
+   "index": 0
+  },
+  {
+   "row": 87,
+   "label": "短期借款",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "短期借款"
+   ],
+   "index": 0
+  },
+  {
+   "row": 88,
+   "label": "交易性金融负债",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "交易性金融负债"
+   ],
+   "index": 0
+  },
+  {
+   "row": 89,
+   "label": "衍生金融负债",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "衍生金融负债"
+   ],
+   "index": 0
+  },
+  {
+   "row": 90,
+   "label": "应付票据",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "应付票据"
+   ],
+   "index": 0
+  },
+  {
+   "row": 91,
+   "label": "应付账款",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "应付账款"
+   ],
+   "index": 0
+  },
+  {
+   "op": "sum",
+   "rows": [
+    90,
+    91
+   ],
+   "note": "应付票据及应付账款 = 应付票据 + 应付账款",
+   "row": 92,
+   "label": "应付票据及应付账款",
+   "mode": "calc"
+  },
+  {
+   "row": 93,
+   "label": "预收款项",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "预收款项"
+   ],
+   "index": 0
+  },
+  {
+   "row": 94,
+   "label": "合同负债",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "合同负债"
+   ],
+   "index": 0
+  },
+  {
+   "row": 95,
+   "label": "应付职工薪酬",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "应付职工薪酬"
+   ],
+   "index": 0
+  },
+  {
+   "row": 96,
+   "label": "应付股利",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "应付股利"
+   ],
+   "index": 0
+  },
+  {
+   "row": 97,
+   "label": "应交税费",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "应交税费"
+   ],
+   "index": 0
+  },
+  {
+   "row": 98,
+   "label": "划分为持有待售的负债",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "划分为持有待售的负债",
+    "持有待售负债"
+   ],
+   "index": 0
+  },
+  {
+   "row": 99,
+   "label": "应付利息",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "应付利息"
+   ],
+   "index": 0
+  },
+  {
+   "row": 100,
+   "label": "其他应付款（含其他应付款、应付股利、应付利息）",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "其他应付款"
+   ],
+   "index": 0
+  },
+  {
+   "row": 101,
+   "label": "递延收益",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "递延收益"
+   ],
+   "index": 0
+  },
+  {
+   "row": 102,
+   "label": "一年内到期的非流动负债",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "年内到期的非流动负债"
+   ],
+   "index": 0
+  },
+  {
+   "row": 103,
+   "label": "其他流动负债",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "其他流动负债"
+   ],
+   "index": 0
+  },
+  {
+   "row": 104,
+   "label": "流动负债合计",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "流动负债合计"
+   ],
+   "index": 0
+  },
+  {
+   "row": 106,
+   "label": "长期借款",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "长期借款"
+   ],
+   "index": 0
+  },
+  {
+   "row": 107,
+   "label": "应付债券",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "应付债券"
+   ],
+   "index": 0
+  },
+  {
+   "row": 108,
+   "label": "租赁负债",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "租赁负债"
+   ],
+   "index": 0
+  },
+  {
+   "row": 109,
+   "label": "长期应付款",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "长期应付款"
+   ],
+   "index": 0
+  },
+  {
+   "row": 110,
+   "label": "专项应付款",
+   "mode": "zero",
+   "value": 0.0,
+   "note": "PDF 无此项（旧准则科目或本公司无），写 0"
+  },
+  {
+   "row": 111,
+   "label": "预计负债",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "预计负债"
+   ],
+   "index": 0
+  },
+  {
+   "row": 112,
+   "label": "递延所得税负债",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "递延所得税负债"
+   ],
+   "index": 0
+  },
+  {
+   "row": 113,
+   "label": "其他非流动负债",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "其他非流动负债"
+   ],
+   "index": 0
+  },
+  {
+   "row": 114,
+   "label": "非流动负债合计",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "非流动负债合计"
+   ],
+   "index": 0
+  },
+  {
+   "row": 115,
+   "label": "六、负债合计",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "负债合计"
+   ],
+   "index": 0
+  },
+  {
+   "row": 116,
+   "label": "负债合计",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "负债合计"
+   ],
+   "index": 0
+  },
+  {
+   "row": 117,
+   "label": "七、股东权益合计",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "股东权益合计",
+    "所有者权益合计"
+   ],
+   "index": 0
+  },
+  {
+   "row": 118,
+   "label": "实收资本(股本)",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "实收资本",
+    "股本"
+   ],
+   "index": 0
+  },
+  {
+   "row": 119,
+   "label": "其它权益工具",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "其它权益工具",
+    "其他权益工具"
+   ],
+   "index": 0
+  },
+  {
+   "row": 120,
+   "label": "其中:_优先股",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "优先股"
+   ],
+   "index": 0
+  },
+  {
+   "row": 121,
+   "label": "其中:_永续债",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "永续债"
+   ],
+   "index": 0
+  },
+  {
+   "row": 122,
+   "label": "资本公积金",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "资本公积金",
+    "资本公积"
+   ],
+   "index": 0
+  },
+  {
+   "row": 123,
+   "label": "减：库存股",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "库存股"
+   ],
+   "index": 0
+  },
+  {
+   "row": 124,
+   "label": "其它综合收益",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "其它综合收益",
+    "其他综合收益"
+   ],
+   "index": 0
+  },
+  {
+   "row": 125,
+   "label": "专项储备",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "专项储备"
+   ],
+   "index": 0
+  },
+  {
+   "row": 126,
+   "label": "盈余公积金",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "盈余公积金",
+    "盈余公积"
+   ],
+   "index": 0
+  },
+  {
+   "row": 127,
+   "label": "未分配利润",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "未分配利润"
+   ],
+   "index": 0
+  },
+  {
+   "row": 128,
+   "label": "外币报表折算差额",
+   "mode": "zero",
+   "value": 0.0,
+   "note": "PDF 无此项（旧准则科目或本公司无），写 0"
+  },
+  {
+   "row": 129,
+   "label": "归属母公司股东权益合计",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "归属母公司股东权益合计",
+    "归属于母公司所有者权益合计"
+   ],
+   "index": 0
+  },
+  {
+   "row": 130,
+   "label": "少数股东权益",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "少数股东权益"
+   ],
+   "index": 0
+  },
+  {
+   "row": 131,
+   "label": "股东权益合计",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "股东权益合计",
+    "所有者权益合计"
+   ],
+   "index": 0
+  },
+  {
+   "row": 132,
+   "label": "八、负债和股东权益合计",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "负债和股东权益合计",
+    "负债和所有者权益总计"
+   ],
+   "index": 0
+  },
+  {
+   "row": 133,
+   "label": "负债和股东权益合计",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "负债和股东权益合计",
+    "负债和所有者权益总计"
+   ],
+   "index": 0
+  },
+  {
+   "mode": "pdf",
+   "statement": "现金流量补充资料",
+   "match": [
+    "固定资产折旧、油气资产折",
+    "固定资产折旧、油气资产折耗、生产性生物资产折旧"
+   ],
+   "row": 137,
+   "label": "固定资产折旧",
+   "index": 0
+  },
+  {
+   "row": 138,
+   "label": "无形资产摊销",
+   "mode": "pdf",
+   "statement": "现金流量补充资料",
+   "match": [
+    "无形资产摊销"
+   ],
+   "index": 0
+  },
+  {
+   "row": 139,
+   "label": "长期待摊费用摊销",
+   "mode": "pdf",
+   "statement": "现金流量补充资料",
+   "match": [
+    "长期待摊费用摊销"
+   ],
+   "index": 0
+  },
+  {
+   "row": 144,
+   "label": "历史PE",
+   "mode": "market",
+   "field": "PE",
+   "note": "市场数据，不在 PDF 中，需外部提供"
+  },
+  {
+   "row": 145,
+   "label": "历史PS",
+   "mode": "market",
+   "field": "PS",
+   "note": "市场数据，不在 PDF 中，需外部提供"
+  },
+  {
+   "row": 146,
+   "label": "历史PB",
+   "mode": "market",
+   "field": "PB",
+   "note": "市场数据，不在 PDF 中，需外部提供"
+  },
+  {
+   "row": 147,
+   "label": "历史EV/EBITDA",
+   "mode": "formula",
+   "note": "模板自算，不是市场数据：年度数据!D147:H147 是 =财务分析!D65（EV/EBITDA），由目录/资产负债/利润表推出。归入 market 会让清理与写入的整列数组赋值把它抹成空，相对估值!D82（=年度数据!I130）此后永远为空，且没有任何市场数据能补回来。公式行既不填也不报缺口。"
+  },
+  {
+   "row": 148,
+   "label": "历史PCF",
+   "mode": "market",
+   "field": "PCF",
+   "note": "市场数据，不在 PDF 中，需外部提供"
+  },
+  {
+   "row": 152,
+   "label": "销售商品、提供劳务收到的现金",
+   "mode": "pdf",
+   "statement": "合并现金流量表",
+   "match": [
+    "销售商品提供劳务收到的现金"
+   ],
+   "index": 0
+  },
+  {
+   "row": 153,
+   "label": "收到的税费返还",
+   "mode": "pdf",
+   "statement": "合并现金流量表",
+   "match": [
+    "收到的税费返还"
+   ],
+   "index": 0
+  },
+  {
+   "row": 154,
+   "label": "收到其他与经营活动有关的现金",
+   "mode": "pdf",
+   "statement": "合并现金流量表",
+   "match": [
+    "收到其他与经营活动有关的现金"
+   ],
+   "index": 0
+  },
+  {
+   "row": 155,
+   "label": "经营活动现金流入小计",
+   "mode": "pdf",
+   "statement": "合并现金流量表",
+   "match": [
+    "经营活动现金流入小计"
+   ],
+   "index": 0
+  },
+  {
+   "row": 156,
+   "label": "购买商品、接受劳务支付的现金",
+   "mode": "pdf",
+   "statement": "合并现金流量表",
+   "match": [
+    "购买商品接受劳务支付的现金"
+   ],
+   "index": 0
+  },
+  {
+   "row": 157,
+   "label": "支付给职工以及为职工支付的现金",
+   "mode": "pdf",
+   "statement": "合并现金流量表",
+   "match": [
+    "支付给职工以及为职工支付的现金"
+   ],
+   "index": 0
+  },
+  {
+   "row": 158,
+   "label": "支付的各项税费",
+   "mode": "pdf",
+   "statement": "合并现金流量表",
+   "match": [
+    "支付的各项税费"
+   ],
+   "index": 0
+  },
+  {
+   "row": 159,
+   "label": "支付其他与经营活动有关的现金",
+   "mode": "pdf",
+   "statement": "合并现金流量表",
+   "match": [
+    "支付其他与经营活动有关的现金"
+   ],
+   "index": 0
+  },
+  {
+   "row": 160,
+   "label": "经营活动现金流出小计",
+   "mode": "pdf",
+   "statement": "合并现金流量表",
+   "match": [
+    "经营活动现金流出小计"
+   ],
+   "index": 0
+  },
+  {
+   "row": 161,
+   "label": "经营活动产生的现金流量净额",
+   "mode": "pdf",
+   "statement": "合并现金流量表",
+   "match": [
+    "经营活动产生的现金流量净额"
+   ],
+   "index": 0
+  },
+  {
+   "row": 163,
+   "label": "收回投资收到的现金",
+   "mode": "pdf",
+   "statement": "合并现金流量表",
+   "match": [
+    "收回投资收到的现金"
+   ],
+   "index": 0
+  },
+  {
+   "row": 164,
+   "label": "取得投资收益收到的现金",
+   "mode": "pdf",
+   "statement": "合并现金流量表",
+   "match": [
+    "取得投资收益收到的现金"
+   ],
+   "index": 0
+  },
+  {
+   "mode": "pdf",
+   "statement": "合并现金流量表",
+   "match": [
+    "处置固定资产、无形资产和其他长"
+   ],
+   "row": 165,
+   "label": "处置固定资产、无形资产和其他长期资产收回的现金净额",
+   "index": 0
+  },
+  {
+   "row": 166,
+   "label": "处置子公司及其他营业单位收到的现金净额",
+   "mode": "zero",
+   "value": 0.0,
+   "note": "PDF 无此项（旧准则科目或本公司无），写 0"
+  },
+  {
+   "row": 167,
+   "label": "收到其他与投资活动有关的现金",
+   "mode": "zero",
+   "value": 0.0,
+   "note": "PDF 无此项（旧准则科目或本公司无），写 0"
+  },
+  {
+   "row": 168,
+   "label": "投资活动现金流入小计",
+   "mode": "pdf",
+   "statement": "合并现金流量表",
+   "match": [
+    "投资活动现金流入小计"
+   ],
+   "index": 0
+  },
+  {
+   "mode": "pdf",
+   "statement": "合并现金流量表",
+   "match": [
+    "购建固定资产、无形资产和其他长"
+   ],
+   "row": 169,
+   "label": "购建固定资产、无形资产和其他长期资产支付的现金",
+   "index": 0
+  },
+  {
+   "row": 170,
+   "label": "投资支付的现金",
+   "mode": "pdf",
+   "statement": "合并现金流量表",
+   "match": [
+    "投资支付的现金"
+   ],
+   "index": 0
+  },
+  {
+   "mode": "pdf",
+   "statement": "合并现金流量表",
+   "match": [
+    "取得子公司及其他营业单位支付的"
+   ],
+   "row": 171,
+   "label": "取得子公司及其他营业单位支付的现金净额",
+   "index": 0
+  },
+  {
+   "row": 172,
+   "label": "支付其他与投资活动有关的现金",
+   "mode": "pdf",
+   "statement": "合并现金流量表",
+   "match": [
+    "支付其他与投资活动有关的现金"
+   ],
+   "index": 0
+  },
+  {
+   "row": 173,
+   "label": "投资活动现金流出小计",
+   "mode": "pdf",
+   "statement": "合并现金流量表",
+   "match": [
+    "投资活动现金流出小计"
+   ],
+   "index": 0
+  },
+  {
+   "row": 174,
+   "label": "投资活动产生的现金流量净额",
+   "mode": "pdf",
+   "statement": "合并现金流量表",
+   "match": [
+    "投资活动产生的现金流量净额"
+   ],
+   "index": 0
+  },
+  {
+   "row": 176,
+   "label": "吸收投资收到的现金",
+   "mode": "pdf",
+   "statement": "合并现金流量表",
+   "match": [
+    "吸收投资收到的现金"
+   ],
+   "index": 0
+  },
+  {
+   "row": 177,
+   "label": "其中：子公司吸收少数股东投资收到的现金",
+   "mode": "zero",
+   "value": 0.0,
+   "note": "PDF 无此项（旧准则科目或本公司无），写 0"
+  },
+  {
+   "row": 178,
+   "label": "取得借款收到的现金",
+   "mode": "pdf",
+   "statement": "合并现金流量表",
+   "match": [
+    "取得借款收到的现金"
+   ],
+   "index": 0
+  },
+  {
+   "row": 179,
+   "label": "收到其他与筹资活动有关的现金",
+   "mode": "pdf",
+   "statement": "合并现金流量表",
+   "match": [
+    "收到其他与筹资活动有关的现金"
+   ],
+   "index": 0
+  },
+  {
+   "row": 180,
+   "label": "发行债券收到的现金",
+   "mode": "zero",
+   "value": 0.0,
+   "note": "PDF 无此项（旧准则科目或本公司无），写 0"
+  },
+  {
+   "row": 181,
+   "label": "筹资活动现金流入小计",
+   "mode": "pdf",
+   "statement": "合并现金流量表",
+   "match": [
+    "筹资活动现金流入小计"
+   ],
+   "index": 0
+  },
+  {
+   "row": 182,
+   "label": "偿还债务支付的现金",
+   "mode": "pdf",
+   "statement": "合并现金流量表",
+   "match": [
+    "偿还债务支付的现金"
+   ],
+   "index": 0
+  },
+  {
+   "mode": "pdf",
+   "statement": "合并现金流量表",
+   "match": [
+    "分配股利、利润或偿付利息支付的"
+   ],
+   "row": 183,
+   "label": "分配股利、利润或偿付利息支付的现金",
+   "index": 0
+  },
+  {
+   "row": 184,
+   "label": "其中：子公司支付给少数股东的股利、利润",
+   "mode": "zero",
+   "value": 0.0,
+   "note": "PDF 无此项（旧准则科目或本公司无），写 0"
+  },
+  {
+   "row": 185,
+   "label": "支付其他与筹资活动有关的现金",
+   "mode": "pdf",
+   "statement": "合并现金流量表",
+   "match": [
+    "支付其他与筹资活动有关的现金"
+   ],
+   "index": 0
+  },
+  {
+   "row": 186,
+   "label": "筹资活动现金流出小计",
+   "mode": "pdf",
+   "statement": "合并现金流量表",
+   "match": [
+    "筹资活动现金流出小计"
+   ],
+   "index": 0
+  },
+  {
+   "row": 187,
+   "label": "筹资活动产生的现金流量净额",
+   "mode": "pdf",
+   "statement": "合并现金流量表",
+   "match": [
+    "筹资活动产生的现金流量净额"
+   ],
+   "index": 0
+  },
+  {
+   "mode": "pdf",
+   "statement": "合并现金流量表",
+   "match": [
+    "四、汇率变动对现金及现金等价物的",
+    "汇率变动对现金及现金等价物的影响"
+   ],
+   "row": 189,
+   "label": "汇率变动对现金的影响",
+   "index": 0
+  },
+  {
+   "row": 190,
+   "label": "现金及现金等价物净增加额",
+   "mode": "pdf",
+   "statement": "合并现金流量表",
+   "match": [
+    "现金及现金等价物净增加额"
+   ],
+   "index": 0
+  },
+  {
+   "row": 191,
+   "label": "期初现金及现金等价物余额",
+   "mode": "pdf",
+   "statement": "合并现金流量表",
+   "match": [
+    "期初现金及现金等价物余额"
+   ],
+   "index": 0
+  },
+  {
+   "row": 192,
+   "label": "期末现金及现金等价物余额",
+   "mode": "pdf",
+   "statement": "合并现金流量表",
+   "match": [
+    "期末现金及现金等价物余额"
+   ],
+   "index": 0
+  },
+  {
+   "row": 195,
+   "label": "净利润",
+   "mode": "pdf",
+   "statement": "现金流量补充资料",
+   "match": [
+    "净利润"
+   ],
+   "index": 0
+  },
+  {
+   "row": 196,
+   "label": "加：资产减值准备",
+   "mode": "pdf",
+   "statement": "现金流量补充资料",
+   "match": [
+    "资产减值准备"
+   ],
+   "index": 0
+  },
+  {
+   "mode": "pdf",
+   "statement": "现金流量补充资料",
+   "match": [
+    "固定资产折旧、油气资产折"
+   ],
+   "row": 197,
+   "label": "固定资产折旧、油气资产折耗、生产性生物资产折旧",
+   "index": 0
+  },
+  {
+   "row": 198,
+   "label": "无形资产摊销",
+   "mode": "pdf",
+   "statement": "现金流量补充资料",
+   "match": [
+    "无形资产摊销"
+   ],
+   "index": 0
+  },
+  {
+   "row": 199,
+   "label": "长期待摊费用摊销",
+   "mode": "pdf",
+   "statement": "现金流量补充资料",
+   "match": [
+    "长期待摊费用摊销"
+   ],
+   "index": 0
+  },
+  {
+   "row": 200,
+   "label": "待摊费用减少",
+   "mode": "zero",
+   "value": 0.0,
+   "note": "PDF 无此项（旧准则科目或本公司无），写 0"
+  },
+  {
+   "row": 201,
+   "label": "预提费用增加",
+   "mode": "zero",
+   "value": 0.0,
+   "note": "PDF 无此项（旧准则科目或本公司无），写 0"
+  },
+  {
+   "mode": "pdf",
+   "statement": "现金流量补充资料",
+   "match": [
+    "他长期资产的损失",
+    "处置固定资产、无形资产和其他长期资产的损失"
+   ],
+   "row": 202,
+   "label": "处置固定资产、无形资产和其他长期资产的损失",
+   "index": 0
+  },
+  {
+   "row": 203,
+   "label": "固定资产报废损失",
+   "mode": "zero",
+   "value": 0.0,
+   "note": "PDF 无此项（旧准则科目或本公司无），写 0"
+  },
+  {
+   "row": 204,
+   "label": "公允价值变动损失",
+   "mode": "pdf",
+   "statement": "现金流量补充资料",
+   "match": [
+    "公允价值变动损失"
+   ],
+   "index": 0
+  },
+  {
+   "mode": "pdf",
+   "statement": "现金流量补充资料",
+   "match": [
+    "财务费用"
+   ],
+   "row": 205,
+   "label": "财务费用",
+   "index": 0
+  },
+  {
+   "row": 206,
+   "label": "投资损失",
+   "mode": "pdf",
+   "statement": "现金流量补充资料",
+   "match": [
+    "投资损失"
+   ],
+   "index": 0
+  },
+  {
+   "row": 207,
+   "label": "递延所得税资产减少",
+   "mode": "pdf",
+   "statement": "现金流量补充资料",
+   "match": [
+    "递延所得税资产减少"
+   ],
+   "index": 0
+  },
+  {
+   "row": 208,
+   "label": "递延所得税负债增加",
+   "mode": "pdf",
+   "statement": "现金流量补充资料",
+   "match": [
+    "递延所得税负债增加"
+   ],
+   "index": 0
+  },
+  {
+   "row": 209,
+   "label": "存货的减少",
+   "mode": "pdf",
+   "statement": "现金流量补充资料",
+   "match": [
+    "存货的减少"
+   ],
+   "index": 0
+  },
+  {
+   "row": 210,
+   "label": "经营性应收项目的减少",
+   "mode": "pdf",
+   "statement": "现金流量补充资料",
+   "match": [
+    "经营性应收项目的减少"
+   ],
+   "index": 0
+  },
+  {
+   "row": 211,
+   "label": "经营性应付项目的增加",
+   "mode": "pdf",
+   "statement": "现金流量补充资料",
+   "match": [
+    "经营性应付项目的增加"
+   ],
+   "index": 0
+  },
+  {
+   "row": 212,
+   "label": "其他",
+   "mode": "pdf",
+   "statement": "现金流量补充资料",
+   "match": [
+    "其他"
+   ],
+   "index": 0
+  },
+  {
+   "row": 213,
+   "label": "间接法-经营活动产生的现金流量净额",
+   "mode": "pdf",
+   "statement": "现金流量补充资料",
+   "match": [
+    "间接法经营活动产生的现金流量净额",
+    "经营活动产生的现金流量净额"
+   ],
+   "index": 0
+  },
+  {
+   "row": 214,
+   "label": "债务转为资本",
+   "mode": "zero",
+   "value": 0.0,
+   "note": "PDF 无此项（旧准则科目或本公司无），写 0"
+  },
+  {
+   "row": 215,
+   "label": "一年内到期的可转换公司债券",
+   "mode": "zero",
+   "value": 0.0,
+   "note": "PDF 无此项（旧准则科目或本公司无），写 0"
+  },
+  {
+   "row": 216,
+   "label": "融资租入固定资产",
+   "mode": "zero",
+   "value": 0.0,
+   "note": "PDF 无此项（旧准则科目或本公司无），写 0"
+  },
+  {
+   "row": 217,
+   "label": "现金的期末余额",
+   "mode": "pdf",
+   "statement": "现金流量补充资料",
+   "match": [
+    "现金的期末余额"
+   ],
+   "index": 0
+  },
+  {
+   "row": 218,
+   "label": "减：现金的期初余额",
+   "mode": "pdf",
+   "statement": "现金流量补充资料",
+   "match": [
+    "现金的期初余额"
+   ],
+   "index": 0
+  },
+  {
+   "row": 219,
+   "label": "加：现金等价物的期末余额",
+   "mode": "zero",
+   "value": 0.0,
+   "note": "PDF 无此项（旧准则科目或本公司无），写 0"
+  },
+  {
+   "row": 220,
+   "label": "减：现金等价物的期初余额",
+   "mode": "zero",
+   "value": 0.0,
+   "note": "PDF 无此项（旧准则科目或本公司无），写 0"
+  },
+  {
+   "row": 221,
+   "label": "间接法-现金及现金等价物净增加额",
+   "mode": "pdf",
+   "statement": "现金流量补充资料",
+   "match": [
+    "间接法现金及现金等价物净增加额",
+    "现金及现金等价物净增加额"
+   ],
+   "index": 0
+  },
+  {
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "其他权益工具"
+   ],
+   "row": 222,
+   "label": "其他权益工具",
+   "index": 0
+  },
+  {
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "其中：优先股",
+    "优先股"
+   ],
+   "row": 223,
+   "label": "其中:其他权益工具_优先股",
+   "index": 0
+  },
+  {
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "永续债"
+   ],
+   "row": 224,
+   "label": "其中:其他权益工具_永续债",
+   "index": 0
+  }
+ ]
+}

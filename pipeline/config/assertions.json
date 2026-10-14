@@ -1,0 +1,163 @@
+{
+ "version": "1.0.0",
+ "description": "写入前后必须通过的断言。模板会把错误吞成 0 且不报错，故必须主动断言。深度/覆盖类检查不在此处：见 compat.py 的 L2 报告（缺年份应降级并标注，而不是让整批数据进不来）。",
+ "pre_write": [
+  {
+   "id": "pdf_reconcile",
+   "desc": "每个写入值必须与 PDF 原值一致（容差 0.005 百万元）",
+   "type": "reconcile",
+   "tol": 0.005,
+   "on_fail": "abort"
+  },
+  {
+   "id": "identity_bs",
+   "desc": "资产总计 = 负债合计 + 股东权益合计",
+   "type": "identity",
+   "left": 85,
+   "right": [
+    115,
+    117
+   ],
+   "tol": 0.005,
+   "on_fail": "abort"
+  },
+  {
+   "id": "identity_bs2",
+   "desc": "资产总计 = 负债和股东权益合计",
+   "type": "identity",
+   "left": 85,
+   "right": [
+    132
+   ],
+   "tol": 0.005,
+   "on_fail": "abort"
+  },
+  {
+   "id": "identity_cf",
+   "desc": "间接法经营净额 = 直接法经营净额",
+   "type": "identity",
+   "left": 213,
+   "right": [
+    161
+   ],
+   "tol": 0.005,
+   "on_fail": "abort"
+  },
+  {
+   "id": "identity_cash",
+   "desc": "期末现金 = 净增加 + 期初",
+   "type": "identity",
+   "left": 217,
+   "right": [
+    190,
+    191
+   ],
+   "tol": 0.005,
+   "on_fail": "abort"
+  }
+ ],
+ "post_write": [
+  {
+   "id": "derived_nonzero",
+   "desc": "派生假设不得为 0（模板会把缺失吞成 0）",
+   "type": "not_zero",
+   "cells": [
+    "假设!I19",
+    "假设!I5",
+    "假设!I6",
+    "假设!I9"
+   ],
+   "on_fail": "abort",
+   "evidence": "_analysis/history_depth_test.json"
+  },
+  {
+   "id": "residual",
+   "desc": "样本公司残留不得存在",
+   "type": "not_equal",
+   "checks": [
+    {
+     "cell": "假设!I55",
+     "value": 72.88,
+     "desc": "商誉"
+    },
+    {
+     "cell": "假设!I68",
+     "value": 426.13,
+     "desc": "合同负债"
+    },
+    {
+     "cell": "假设!I79",
+     "value": 16.43,
+     "desc": "递延所得税负债"
+    },
+    {
+     "cell": "假设!I81",
+     "value": 114.37,
+     "desc": "预计负债"
+    },
+    {
+     "cell": "目录!C6",
+     "value": "300737.SZ",
+     "desc": "股票代码"
+    }
+   ],
+   "on_fail": "abort",
+   "evidence": "_analysis/residual_leak_test.json"
+  },
+  {
+   "id": "formula_set_unchanged",
+   "desc": "写入不得减少任何工作表的公式单元格数（对原件逐表计数）。这是 147 行事故的通用形式：整块数组赋值会把覆盖到的每行写成空，块内任何公式都会消失，而单元格只是变空、不会报错",
+   "type": "formula_set_unchanged",
+   "on_fail": "abort",
+   "evidence": "../docs/03_验证记录与已修复问题.md § 二"
+  },
+  {
+   "id": "formulas_intact",
+   "desc": "模板自算行不得被写入抹掉：年度数据!D147:H147 = 财务分析!D65（历史EV/EBITDA），相对估值!D82 经 年度数据!I130 读它；报告期历史数据 第 3 行日期表头与 报告期利润变化 的 240 个引用是季度通道的入口，整列数组赋值会把它们写成空",
+   "type": "formulas_intact",
+   "cells": [
+    "年度数据!D147",
+    "年度数据!E147",
+    "年度数据!F147",
+    "年度数据!G147",
+    "年度数据!H147",
+    "报告期历史数据!C3",
+    "报告期历史数据!D3",
+    "报告期历史数据!N3",
+    "报告期利润变化!C3",
+    "报告期利润变化!N3"
+   ],
+   "on_fail": "abort",
+   "evidence": "../docs/01_ § 年度数据 144-148；docs/08_ § 报告期历史数据"
+  },
+  {
+   "id": "valuation_nonzero",
+   "desc": "估值结果必须非零（防止残留假设产出无意义数字）",
+   "type": "not_zero",
+   "cells": [
+    "绝对估值!D40"
+   ],
+   "on_fail": "abort"
+  },
+  {
+   "id": "no_new_errors",
+   "desc": "写入不得让任何表的错误值变多（基线 = 打开干净模板时实测；#DIV/0! 等经 COM 返回为负整数，只查字符串会全部漏掉）",
+   "type": "errors_zero",
+   "on_fail": "abort",
+   "evidence": "_analysis/smoke/errbase.txt"
+  },
+  {
+   "id": "fidelity",
+   "desc": "模板保真：部件数、图表/控件/链接计数不变",
+   "type": "zip_metrics",
+   "on_fail": "abort",
+   "evidence": "_analysis/poc_com_result.json"
+  }
+ ],
+ "layer_note": {
+  "L1_pre_write": "数据正确性（硬）：会计恒等式、逐项对账。只管「已有值对不对」。",
+  "L2_compat": "够不够用（软，报告不拦截）：年份覆盖、映射失败、派生假设归零风险、需补哪几份年报。",
+  "L3_post_write": "写进去有没有坏（硬）：结果非零、错误值不增、模板保真；并据 L2 判定拒绝或降级。"
+ },
+ "why_unresolved_is_not_here": "映射失败与年份缺口同属「没有这个值」，归 L2。在此硬拦截会让整批数据进不来，连本来可用的相对估值与事实层一起丢掉。缺值造成的后果由 L2 的归零分析兜住。"
+}

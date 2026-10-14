@@ -1,0 +1,13 @@
+# A股估值模型填充 · Web 版
+#
+# 服务端不需要 Excel、不需要 Windows、不需要 pywin32。
+# 写工作簿由 pipeline/scripts/com_excel.py 直接改 xlsm 里的 XML 完成；
+# 公式的计算结果由办公人员用 Excel 打开时算（文件里写了 fullCalcOnLoad=1）。
+#
+# 安装：python -m pip install -r requirements.txt
+Flask==3.0.3
+pdfplumber==0.11.9
+openpyxl==3.1.5
+olefile==0.47
+waitress==3.0.2
+psutil==7.2.2

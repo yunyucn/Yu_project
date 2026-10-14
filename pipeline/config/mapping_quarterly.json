@@ -1,0 +1,1552 @@
+{
+ "version": "1.0.0",
+ "description": "报告期历史数据 行 -> PDF 报表科目。行号 = 数据输入季度数据 行号 + 1，经原件全表核对（4..300 行仅 1 处措辞差异）。",
+ "sheet": "报告期历史数据",
+ "header_row": 3,
+ "input_sheet": "数据输入季度数据",
+ "input_header_row": 2,
+ "row_offset": 1,
+ "units": {
+  "target": "百万元",
+  "pdf": "元",
+  "scale": 1e-06
+ },
+ "statement_expectation": {
+  "note": "这种报告本来就该带哪几张表。季报只披露三张主表，不披露现金流量补充资料——那是格式，不是缺口；把它算成缺格会让真正要紧的告警被忽略。",
+  "annual": ["合并资产负债表", "合并利润表", "合并现金流量表", "现金流量补充资料"],
+  "half": ["合并资产负债表", "合并利润表", "合并现金流量表", "现金流量补充资料"],
+  "q1": ["合并资产负债表", "合并利润表", "合并现金流量表"],
+  "q3": ["合并资产负债表", "合并利润表", "合并现金流量表"]
+ },
+ "rows": [
+  {
+   "row": 4,
+   "src_row": 3,
+   "label": "一、营业收入",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "营业收入"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 3
+  },
+  {
+   "row": 5,
+   "src_row": 4,
+   "label": "营业收入",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "营业收入"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 3
+  },
+  {
+   "row": 6,
+   "src_row": 5,
+   "label": "减：营业成本",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "营业成本"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 5
+  },
+  {
+   "row": 7,
+   "src_row": 6,
+   "label": "减：营业税金及附加",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "营业税金及附加",
+    "税金及附加"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 6
+  },
+  {
+   "row": 8,
+   "src_row": 7,
+   "label": "减：销售费用",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "销售费用"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 7
+  },
+  {
+   "row": 9,
+   "src_row": 8,
+   "label": "减：管理费用",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "管理费用"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 8
+  },
+  {
+   "row": 10,
+   "src_row": 9,
+   "label": "减：研发费用",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "研发费用"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 9
+  },
+  {
+   "row": 11,
+   "src_row": 10,
+   "label": "减：财务费用",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "财务费用"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 10
+  },
+  {
+   "row": 12,
+   "src_row": 11,
+   "label": "  利息支出",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "利息支出",
+    "利息费用"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 11
+  },
+  {
+   "row": 13,
+   "src_row": 12,
+   "label": "  减：利息收入",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "利息收入"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 12
+  },
+  {
+   "row": 14,
+   "src_row": 13,
+   "label": "减：资产减值损失",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "资产减值损失"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 13
+  },
+  {
+   "row": 15,
+   "src_row": 14,
+   "label": "减：信用减值损失",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "信用减值损失"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 14
+  },
+  {
+   "row": 16,
+   "src_row": 15,
+   "label": "加：公允价值变动净收益",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "公允价值变动净收益",
+    "公允价值变动收益"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 15
+  },
+  {
+   "row": 17,
+   "src_row": 16,
+   "label": "加：其他收益",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "其他收益"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 16
+  },
+  {
+   "row": 18,
+   "src_row": 17,
+   "label": "加：投资净收益",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "投资净收益",
+    "投资收益"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 17
+  },
+  {
+   "row": 19,
+   "src_row": 18,
+   "label": "其中：对联营合营企业投资收益",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "对联营企业和合营企业的投资收益",
+    "其中：对联营企业和合营企业的投资收益",
+    "企业的投资收益",
+    "其中：对联营企业和合营"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 18
+  },
+  {
+   "row": 20,
+   "src_row": 19,
+   "label": "加：资产处置收益",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "资产处置收益"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 19
+  },
+  {
+   "row": 21,
+   "src_row": 20,
+   "label": "二、营业利润",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "营业利润"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 20
+  },
+  {
+   "row": 22,
+   "src_row": 21,
+   "label": "营业利润",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "营业利润"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 20
+  },
+  {
+   "row": 23,
+   "src_row": 22,
+   "label": "加：营业外收入",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "营业外收入"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 22
+  },
+  {
+   "row": 24,
+   "src_row": 23,
+   "label": "减：营业外支出",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "营业外支出"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 23
+  },
+  {
+   "row": 25,
+   "src_row": 24,
+   "label": "三、利润总额",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "利润总额"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 24
+  },
+  {
+   "row": 26,
+   "src_row": 25,
+   "label": "利润总额",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "利润总额"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 24
+  },
+  {
+   "row": 27,
+   "src_row": 26,
+   "label": "减：所得税",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "所得税",
+    "所得税费用"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 26
+  },
+  {
+   "row": 28,
+   "src_row": 27,
+   "label": "四、净利润",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "净利润"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 28
+  },
+  {
+   "row": 29,
+   "src_row": 28,
+   "label": "净利润",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "净利润"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 28
+  },
+  {
+   "row": 30,
+   "src_row": 29,
+   "label": "加：少数股东损益",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "2.少数股东损益",
+    "少数股东损益"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 29
+  },
+  {
+   "row": 31,
+   "src_row": 30,
+   "label": "归属于母公司所有者净利润",
+   "mode": "pdf",
+   "statement": "合并利润表",
+   "match": [
+    "1.归属于母公司股东的净利润",
+    "归属于母公司股东的净利润",
+    "归属于母公司所有者的净利润",
+    "1.归属于母公司所有者的净利润"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 30,
+   "note": "norm() 只剥掉列表序号的数字、留下点号（'1.归属于母公司所有者的净利润' -> '.归属于母公司所有者的净利润'），所以带 '1.' 的别名必须照原样写全，否则对不上。见 docs/08_ 的已知问题。"
+  },
+  {
+   "row": 34,
+   "src_row": 33,
+   "label": "每股派现",
+   "mode": "const",
+   "statement": null,
+   "match": null,
+   "scale": 0.1,
+   "from_mapping_row": 33,
+   "field": "每10股派息数",
+   "source": "利润分配",
+   "value": null,
+   "optional": null,
+   "unit": "元"
+  },
+  {
+   "row": 35,
+   "src_row": 34,
+   "label": "每股红股",
+   "mode": "const",
+   "statement": null,
+   "match": null,
+   "scale": 0.1,
+   "from_mapping_row": 34,
+   "field": "每10股送红股数",
+   "source": "利润分配",
+   "value": 0.0,
+   "optional": null,
+   "unit": "股"
+  },
+  {
+   "row": 36,
+   "src_row": 35,
+   "label": "每股转增",
+   "mode": "const",
+   "statement": null,
+   "match": null,
+   "scale": 0.1,
+   "from_mapping_row": 35,
+   "field": "每10股转增数",
+   "source": "利润分配",
+   "value": 0.0,
+   "optional": null,
+   "unit": "股"
+  },
+  {
+   "row": 41,
+   "src_row": 40,
+   "label": "货币资金",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "货币资金"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 43
+  },
+  {
+   "row": 42,
+   "src_row": 41,
+   "label": "交易性金融资产",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "交易性金融资产"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 44
+  },
+  {
+   "row": 43,
+   "src_row": 42,
+   "label": "衍生金融资产",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "衍生金融资产"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 45
+  },
+  {
+   "row": 44,
+   "src_row": 43,
+   "label": "应收票据及应收账款",
+   "mode": "calc",
+   "statement": null,
+   "match": null,
+   "scale": 1e-06,
+   "from_mapping_row": 50,
+   "rows": [
+    45,
+    48
+   ]
+  },
+  {
+   "row": 45,
+   "src_row": 44,
+   "label": "应收票据",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "应收票据"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 46
+  },
+  {
+   "row": 46,
+   "src_row": 45,
+   "label": "应收股利",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "应收股利"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 48
+  },
+  {
+   "row": 47,
+   "src_row": 46,
+   "label": "应收利息",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "应收利息"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 49
+  },
+  {
+   "row": 48,
+   "src_row": 47,
+   "label": "应收账款",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "应收账款"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 47
+  },
+  {
+   "row": 49,
+   "src_row": 48,
+   "label": "其他应收账款",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "其他应收款"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 52
+  },
+  {
+   "row": 50,
+   "src_row": 49,
+   "label": "应收款项融资",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "应收款项融资"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 51
+  },
+  {
+   "row": 51,
+   "src_row": 50,
+   "label": "应收股利、应收利息和其他应收账款",
+   "mode": "calc",
+   "rows": [
+    46,
+    47,
+    49
+   ],
+   "statement": null,
+   "match": null,
+   "scale": 1e-06
+  },
+  {
+   "row": 52,
+   "src_row": 51,
+   "label": "预付账款",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "预付款项"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 53
+  },
+  {
+   "row": 53,
+   "src_row": 52,
+   "label": "存货",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "存货"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 54
+  },
+  {
+   "row": 54,
+   "src_row": 53,
+   "label": "合同资产",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "合同资产"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 55
+  },
+  {
+   "row": 55,
+   "src_row": 54,
+   "label": "划分为持有待售的资产",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "划分为持有待售的资产",
+    "持有待售资产"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 56
+  },
+  {
+   "row": 56,
+   "src_row": 55,
+   "label": "一年内到期的非流动资产",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "年内到期的非流动资产"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 57
+  },
+  {
+   "row": 57,
+   "src_row": 56,
+   "label": "其他流动资产",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "其他流动资产"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 58
+  },
+  {
+   "row": 58,
+   "src_row": 57,
+   "label": "流动资产合计",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "流动资产合计"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 59
+  },
+  {
+   "row": 59,
+   "src_row": 58,
+   "label": "二、非流动资产合计",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "非流动资产合计"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 83
+  },
+  {
+   "row": 60,
+   "src_row": 59,
+   "label": "债权投资",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "债权投资"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 61
+  },
+  {
+   "row": 61,
+   "src_row": 60,
+   "label": "其他债权投资",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "其他债权投资"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 62
+  },
+  {
+   "row": 62,
+   "src_row": 61,
+   "label": "可供出售金融资产",
+   "mode": "zero",
+   "statement": null,
+   "match": null,
+   "scale": 1e-06,
+   "from_mapping_row": 63
+  },
+  {
+   "row": 63,
+   "src_row": 62,
+   "label": "其他权益工具投资",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "其他权益工具投资"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 64
+  },
+  {
+   "row": 64,
+   "src_row": 63,
+   "label": "持有至到期投资",
+   "mode": "zero",
+   "statement": null,
+   "match": null,
+   "scale": 1e-06,
+   "from_mapping_row": 65
+  },
+  {
+   "row": 65,
+   "src_row": 64,
+   "label": "其他非流动金融资产",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "其他非流动金融资产"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 66
+  },
+  {
+   "row": 66,
+   "src_row": 65,
+   "label": "投资性房地产",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "投资性房地产"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 67
+  },
+  {
+   "row": 67,
+   "src_row": 66,
+   "label": "长期股权投资",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "长期股权投资"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 68
+  },
+  {
+   "row": 68,
+   "src_row": 67,
+   "label": "固定资产",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "固定资产"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 69
+  },
+  {
+   "row": 69,
+   "src_row": 68,
+   "label": "工程物资",
+   "mode": "zero",
+   "statement": null,
+   "match": null,
+   "scale": 1e-06,
+   "from_mapping_row": 70
+  },
+  {
+   "row": 70,
+   "src_row": 69,
+   "label": "在建工程",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "在建工程"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 71
+  },
+  {
+   "row": 71,
+   "src_row": 70,
+   "label": "使用权资产",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "使用权资产"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 72
+  },
+  {
+   "row": 72,
+   "src_row": 71,
+   "label": "固定资产清理",
+   "mode": "zero",
+   "statement": null,
+   "match": null,
+   "scale": 1e-06,
+   "from_mapping_row": 73
+  },
+  {
+   "row": 73,
+   "src_row": 72,
+   "label": "生产性生物资产",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "生产性生物资产"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 74
+  },
+  {
+   "row": 74,
+   "src_row": 73,
+   "label": "油气资产",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "油气资产"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 75
+  },
+  {
+   "row": 75,
+   "src_row": 74,
+   "label": "无形资产",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "无形资产"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 76
+  },
+  {
+   "row": 76,
+   "src_row": 75,
+   "label": "开发支出",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "开发支出"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 77
+  },
+  {
+   "row": 77,
+   "src_row": 76,
+   "label": "商誉",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "商誉"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 78
+  },
+  {
+   "row": 78,
+   "src_row": 77,
+   "label": "长期待摊费用",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "长期待摊费用"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 79
+  },
+  {
+   "row": 79,
+   "src_row": 78,
+   "label": "长期应收款",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "长期应收款"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 80
+  },
+  {
+   "row": 80,
+   "src_row": 79,
+   "label": "递延所得税资产",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "递延所得税资产"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 81
+  },
+  {
+   "row": 81,
+   "src_row": 80,
+   "label": "其他非流动资产",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "其他非流动资产"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 82
+  },
+  {
+   "row": 82,
+   "src_row": 81,
+   "label": "非流动资产合计",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "非流动资产合计"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 83
+  },
+  {
+   "row": 83,
+   "src_row": 82,
+   "label": "三、资产总计",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "资产总计"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 85
+  },
+  {
+   "row": 84,
+   "src_row": 83,
+   "label": "资产总计",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "资产总计"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 85
+  },
+  {
+   "row": 86,
+   "src_row": 85,
+   "label": "短期借款",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "短期借款"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 87
+  },
+  {
+   "row": 87,
+   "src_row": 86,
+   "label": "交易性金融负债",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "交易性金融负债"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 88
+  },
+  {
+   "row": 88,
+   "src_row": 87,
+   "label": "衍生金融负债",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "衍生金融负债"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 89
+  },
+  {
+   "row": 89,
+   "src_row": 88,
+   "label": "应付票据和应付账款",
+   "mode": "calc",
+   "statement": null,
+   "match": null,
+   "scale": 1e-06,
+   "from_mapping_row": 92,
+   "rows": [
+    90,
+    91
+   ]
+  },
+  {
+   "row": 90,
+   "src_row": 89,
+   "label": "应付票据",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "应付票据"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 90
+  },
+  {
+   "row": 91,
+   "src_row": 90,
+   "label": "应付账款",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "应付账款"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 91
+  },
+  {
+   "row": 92,
+   "src_row": 91,
+   "label": "预收账款",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "预收款项"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 93
+  },
+  {
+   "row": 93,
+   "src_row": 92,
+   "label": "合同负债",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "合同负债"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 94
+  },
+  {
+   "row": 94,
+   "src_row": 93,
+   "label": "应付职工薪酬",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "应付职工薪酬"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 95
+  },
+  {
+   "row": 95,
+   "src_row": 94,
+   "label": "应付股利",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "应付股利"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 96
+  },
+  {
+   "row": 96,
+   "src_row": 95,
+   "label": "应交税金",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "应交税费"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 97
+  },
+  {
+   "row": 97,
+   "src_row": 96,
+   "label": "应付利息",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "应付利息"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 99
+  },
+  {
+   "row": 98,
+   "src_row": 97,
+   "label": "其他应付款",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "其他应付款"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 100
+  },
+  {
+   "row": 99,
+   "src_row": 98,
+   "label": "划分为持有待售的负债",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "划分为持有待售的负债",
+    "持有待售负债"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 98
+  },
+  {
+   "row": 100,
+   "src_row": 99,
+   "label": "应付股利、应付利息和其他应付款",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "其他应付款"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 100
+  },
+  {
+   "row": 101,
+   "src_row": 100,
+   "label": "递延收益",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "递延收益"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 101
+  },
+  {
+   "row": 102,
+   "src_row": 101,
+   "label": "一年内到期的非流动负债",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "年内到期的非流动负债"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 102
+  },
+  {
+   "row": 103,
+   "src_row": 102,
+   "label": "其他流动负债",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "其他流动负债"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 103
+  },
+  {
+   "row": 104,
+   "src_row": 103,
+   "label": "流动负债合计",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "流动负债合计"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 104
+  },
+  {
+   "row": 106,
+   "src_row": 105,
+   "label": "长期借款",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "长期借款"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 106
+  },
+  {
+   "row": 107,
+   "src_row": 106,
+   "label": "应付债券",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "应付债券"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 107
+  },
+  {
+   "row": 108,
+   "src_row": 107,
+   "label": "租赁负债",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "租赁负债"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 108
+  },
+  {
+   "row": 109,
+   "src_row": 108,
+   "label": "长期应付款",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "长期应付款"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 109
+  },
+  {
+   "row": 110,
+   "src_row": 109,
+   "label": "专项应付款",
+   "mode": "zero",
+   "statement": null,
+   "match": null,
+   "scale": 1e-06,
+   "from_mapping_row": 110
+  },
+  {
+   "row": 111,
+   "src_row": 110,
+   "label": "预计负债",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "预计负债"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 111
+  },
+  {
+   "row": 112,
+   "src_row": 111,
+   "label": "递延所得税负债",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "递延所得税负债"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 112
+  },
+  {
+   "row": 113,
+   "src_row": 112,
+   "label": "其他非流动负债",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "其他非流动负债"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 113
+  },
+  {
+   "row": 114,
+   "src_row": 113,
+   "label": "非流动负债合计",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "非流动负债合计"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 114
+  },
+  {
+   "row": 115,
+   "src_row": 114,
+   "label": "六、负债合计",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "负债合计"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 115
+  },
+  {
+   "row": 116,
+   "src_row": 115,
+   "label": "负债合计",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "负债合计"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 115
+  },
+  {
+   "row": 117,
+   "src_row": 116,
+   "label": "七、股东权益合计",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "股东权益合计",
+    "所有者权益合计"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 117
+  },
+  {
+   "row": 118,
+   "src_row": 117,
+   "label": "实收资本(股本)",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "实收资本",
+    "股本"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 118
+  },
+  {
+   "row": 119,
+   "src_row": 118,
+   "label": "其它权益工具",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "其它权益工具",
+    "其他权益工具"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 119
+  },
+  {
+   "row": 120,
+   "src_row": 119,
+   "label": "其中:_优先股",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "优先股"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 120
+  },
+  {
+   "row": 121,
+   "src_row": 120,
+   "label": "其中:_永续债",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "永续债"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 121
+  },
+  {
+   "row": 122,
+   "src_row": 121,
+   "label": "资本公积金",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "资本公积金",
+    "资本公积"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 122
+  },
+  {
+   "row": 123,
+   "src_row": 122,
+   "label": "减：库存股",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "库存股"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 123
+  },
+  {
+   "row": 124,
+   "src_row": 123,
+   "label": "其它综合收益",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "其它综合收益",
+    "其他综合收益"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 124
+  },
+  {
+   "row": 125,
+   "src_row": 124,
+   "label": "专项储备",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "专项储备"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 125
+  },
+  {
+   "row": 126,
+   "src_row": 125,
+   "label": "盈余公积金",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "盈余公积金",
+    "盈余公积"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 126
+  },
+  {
+   "row": 127,
+   "src_row": 126,
+   "label": "未分配利润",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "未分配利润"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 127
+  },
+  {
+   "row": 128,
+   "src_row": 127,
+   "label": "外币报表折算差额",
+   "mode": "zero",
+   "statement": null,
+   "match": null,
+   "scale": 1e-06,
+   "from_mapping_row": 128
+  },
+  {
+   "row": 129,
+   "src_row": 128,
+   "label": "归属母公司股东权益合计",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "归属母公司股东权益合计",
+    "归属于母公司所有者权益合计"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 129
+  },
+  {
+   "row": 130,
+   "src_row": 129,
+   "label": "少数股东权益",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "少数股东权益"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 130
+  },
+  {
+   "row": 131,
+   "src_row": 130,
+   "label": "股东权益合计",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "股东权益合计",
+    "所有者权益合计"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 117
+  },
+  {
+   "row": 132,
+   "src_row": 131,
+   "label": "八、负债和股东权益合计",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "负债和股东权益合计",
+    "负债和所有者权益总计"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 132
+  },
+  {
+   "row": 133,
+   "src_row": 132,
+   "label": "负债和股东权益合计",
+   "mode": "pdf",
+   "statement": "合并资产负债表",
+   "match": [
+    "负债和股东权益合计",
+    "负债和所有者权益总计"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 132
+  },
+  {
+   "row": 137,
+   "src_row": 136,
+   "label": "固定资产折旧",
+   "mode": "pdf",
+   "statement": "现金流量补充资料",
+   "match": [
+    "固定资产折旧、油气资产折",
+    "固定资产折旧、油气资产折耗、生产性生物资产折旧"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 137
+  },
+  {
+   "row": 138,
+   "src_row": 137,
+   "label": "无形资产摊销",
+   "mode": "pdf",
+   "statement": "现金流量补充资料",
+   "match": [
+    "无形资产摊销"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 138
+  },
+  {
+   "row": 139,
+   "src_row": 138,
+   "label": "长期待摊费用摊销",
+   "mode": "pdf",
+   "statement": "现金流量补充资料",
+   "match": [
+    "长期待摊费用摊销"
+   ],
+   "scale": 1e-06,
+   "from_mapping_row": 139
+  }
+ ]
+}

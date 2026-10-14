@@ -1,0 +1,2796 @@
+{
+ "version": "3.0.0",
+ "description": "每个派生假设在缺哪一列时会归零（实测），以及每列依赖哪些年度数据行。用于 L2 兼容层判定「缺哪几列会让哪个假设归零」。",
+ "derived_from": "开源_A股估值模型(非金融)_20240109043703.xlsm",
+ "method": "逐列清空 年度数据!C:H（每次一列），重算后读取 65 个 AVERAGE 派生假设的值，与基线比较。",
+ "why_measured": "公式推断会错：假设形如 IF(ISNUMBER(AVERAGE(...)), AVERAGE(...), 0)，缺列时可能是 #DIV/0! 被吞成 0（塌陷），也可能只是被 0 稀释（不塌陷），取决于该格是除法还是直接引用。只有实测能区分。",
+ "collapse_rule": "collapse_on_missing 中的列若整列缺失 -> 该假设确定归零；若仅部分行缺失 -> 标记为「有风险」。",
+ "criticality": "drives=dcf 表示该假设被 绝对估值!D40 依赖（实测追踪）；pe/ps 同理。dcf 类归零会让 DCF 不可信。",
+ "evidence": [
+  " ",
+  ",",
+  ".",
+  "/",
+  "_",
+  "_analysis/cell_collapse.json",
+  "a",
+  "c",
+  "e",
+  "i",
+  "j",
+  "l",
+  "m",
+  "n",
+  "o",
+  "p",
+  "r",
+  "s",
+  "t",
+  "x",
+  "y"
+ ],
+ "measured_summary": {
+  "C": 0,
+  "D": 9,
+  "E": 21,
+  "F": 22,
+  "G": 23,
+  "H": 25
+ },
+ "assumptions": [
+  {
+   "cell": "假设!I11",
+   "label": "加：信用减值损失（损失以'-'填列）",
+   "drives": [
+    "dcf",
+    "pe"
+   ],
+   "collapse_on_missing": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "required_cols": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "D": [
+     4,
+     14
+    ],
+    "E": [
+     4,
+     14
+    ],
+    "F": [
+     4,
+     14
+    ],
+    "G": [
+     4,
+     14
+    ],
+    "H": [
+     4,
+     14
+    ]
+   },
+   "collapse_cells": {
+    "D": [
+     4
+    ],
+    "E": [
+     4
+    ],
+    "F": [
+     4
+    ],
+    "G": [
+     4
+    ],
+    "H": [
+     4
+    ]
+   },
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!I12",
+   "label": "公允价值变动净收益",
+   "drives": [
+    "dcf",
+    "pe"
+   ],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "G": [
+     15
+    ],
+    "H": [
+     15
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!I13",
+   "label": "投资净收益(对联营合营企业投资收益)",
+   "drives": [
+    "dcf",
+    "pe"
+   ],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "D": [
+     18
+    ],
+    "E": [
+     18
+    ],
+    "F": [
+     18
+    ],
+    "G": [
+     18
+    ],
+    "H": [
+     18
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!I14",
+   "label": "投资净收益(其他)",
+   "drives": [
+    "dcf",
+    "pe"
+   ],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "D": [
+     17,
+     18
+    ],
+    "E": [
+     17,
+     18
+    ],
+    "F": [
+     17,
+     18
+    ],
+    "G": [
+     17,
+     18
+    ],
+    "H": [
+     17,
+     18
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!I16",
+   "label": "资产处置收益",
+   "drives": [
+    "dcf",
+    "pe"
+   ],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "D": [
+     19
+    ],
+    "E": [
+     19
+    ],
+    "F": [
+     19
+    ],
+    "G": [
+     19
+    ],
+    "H": [
+     19
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!I17",
+   "label": "营业外收入",
+   "drives": [
+    "dcf",
+    "pe"
+   ],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "D": [
+     22
+    ],
+    "E": [
+     22
+    ],
+    "F": [
+     22
+    ],
+    "G": [
+     22
+    ],
+    "H": [
+     22
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!I18",
+   "label": "营业外支出",
+   "drives": [
+    "dcf",
+    "pe"
+   ],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "F": [
+     23
+    ],
+    "G": [
+     23
+    ],
+    "H": [
+     23
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!I19",
+   "label": "税率",
+   "drives": [
+    "dcf",
+    "pe"
+   ],
+   "collapse_on_missing": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "required_cols": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "D": [
+     25,
+     26
+    ],
+    "E": [
+     25,
+     26
+    ],
+    "F": [
+     25,
+     26
+    ],
+    "G": [
+     25,
+     26
+    ],
+    "H": [
+     25,
+     26
+    ]
+   },
+   "collapse_cells": {
+    "D": [
+     25
+    ],
+    "E": [
+     25
+    ],
+    "F": [
+     25
+    ],
+    "G": [
+     25
+    ],
+    "H": [
+     25
+    ]
+   },
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!I21",
+   "label": "少数股东损益",
+   "drives": [
+    "pe"
+   ],
+   "collapse_on_missing": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "required_cols": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "D": [
+     28,
+     29
+    ],
+    "E": [
+     28,
+     29
+    ],
+    "F": [
+     28,
+     29
+    ],
+    "G": [
+     28,
+     29
+    ],
+    "H": [
+     28,
+     29
+    ]
+   },
+   "collapse_cells": {
+    "D": [
+     28
+    ],
+    "E": [
+     28
+    ],
+    "F": [
+     28
+    ],
+    "G": [
+     28
+    ],
+    "H": [
+     28
+    ]
+   },
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!I22",
+   "label": "每股派现",
+   "drives": [],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "E": [
+     33
+    ],
+    "F": [
+     33
+    ],
+    "G": [
+     33
+    ],
+    "H": [
+     33
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!I23",
+   "label": "现金分红率(%)",
+   "drives": [],
+   "collapse_on_missing": [
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "required_cols": [
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "E": [
+     30,
+     33,
+     118
+    ],
+    "F": [
+     30,
+     33,
+     118
+    ],
+    "G": [
+     30,
+     33,
+     118
+    ],
+    "H": [
+     30,
+     33,
+     118
+    ]
+   },
+   "collapse_cells": {
+    "E": [
+     30,
+     118
+    ],
+    "F": [
+     30,
+     118
+    ],
+    "G": [
+     30,
+     118
+    ],
+    "H": [
+     30,
+     118
+    ]
+   },
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!I24",
+   "label": "盈余公积金",
+   "drives": [],
+   "collapse_on_missing": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "required_cols": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "D": [
+     28,
+     126
+    ],
+    "E": [
+     28,
+     126
+    ],
+    "F": [
+     28,
+     126
+    ],
+    "G": [
+     28,
+     126
+    ],
+    "H": [
+     28,
+     126
+    ]
+   },
+   "collapse_cells": {
+    "D": [
+     28
+    ],
+    "E": [
+     28
+    ],
+    "F": [
+     28
+    ],
+    "G": [
+     28
+    ],
+    "H": [
+     28
+    ]
+   },
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!I31",
+   "label": "交易性金融资产",
+   "drives": [],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "E": [
+     44
+    ],
+    "F": [
+     44
+    ],
+    "G": [
+     44
+    ],
+    "H": [
+     44
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!I35",
+   "label": "应收账款",
+   "drives": [],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "E": [
+     47
+    ],
+    "F": [
+     4,
+     47
+    ],
+    "G": [
+     4,
+     47
+    ],
+    "H": [
+     4,
+     47
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!I41",
+   "label": "合同资产",
+   "drives": [],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "D": [
+     55
+    ],
+    "E": [
+     4,
+     55
+    ],
+    "F": [
+     4,
+     55
+    ],
+    "G": [
+     4,
+     55
+    ],
+    "H": [
+     4,
+     55
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!I46",
+   "label": "债权投资",
+   "drives": [],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "E": [
+     61
+    ],
+    "F": [
+     61
+    ],
+    "G": [
+     61
+    ],
+    "H": [
+     61
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!I5",
+   "label": "营业税金及附加",
+   "drives": [
+    "dcf",
+    "pe"
+   ],
+   "collapse_on_missing": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "required_cols": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "D": [
+     4,
+     6
+    ],
+    "E": [
+     4,
+     6
+    ],
+    "F": [
+     4,
+     6
+    ],
+    "G": [
+     4,
+     6
+    ],
+    "H": [
+     4,
+     6
+    ]
+   },
+   "collapse_cells": {
+    "D": [
+     4
+    ],
+    "E": [
+     4
+    ],
+    "F": [
+     4
+    ],
+    "G": [
+     4
+    ],
+    "H": [
+     4
+    ]
+   },
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!I52",
+   "label": "投资性房地产",
+   "drives": [],
+   "collapse_on_missing": [
+    "H"
+   ],
+   "required_cols": [
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "E": [
+     67
+    ],
+    "F": [
+     67
+    ],
+    "G": [
+     67
+    ],
+    "H": [
+     67
+    ]
+   },
+   "collapse_cells": {
+    "H": [
+     67
+    ]
+   },
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!I58",
+   "label": "其他非流动资产",
+   "drives": [],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "E": [
+     61,
+     83
+    ],
+    "F": [
+     61,
+     83
+    ],
+    "G": [
+     61,
+     83
+    ],
+    "H": [
+     61,
+     83
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!I6",
+   "label": "营业费用",
+   "drives": [
+    "dcf",
+    "pe"
+   ],
+   "collapse_on_missing": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "required_cols": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "D": [
+     4,
+     7
+    ],
+    "E": [
+     4,
+     7
+    ],
+    "F": [
+     4,
+     7
+    ],
+    "G": [
+     4,
+     7
+    ],
+    "H": [
+     4,
+     7
+    ]
+   },
+   "collapse_cells": {
+    "D": [
+     4
+    ],
+    "E": [
+     4
+    ],
+    "F": [
+     4
+    ],
+    "G": [
+     4
+    ],
+    "H": [
+     4
+    ]
+   },
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!I67",
+   "label": "预收账款",
+   "drives": [],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "F": [
+     93
+    ],
+    "G": [
+     5,
+     93
+    ],
+    "H": [
+     5,
+     93
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!I69",
+   "label": "递延收益",
+   "drives": [],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "G": [
+     101
+    ],
+    "H": [
+     101
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!I80",
+   "label": "专项应付款",
+   "drives": [],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "G": [
+     110
+    ],
+    "H": [
+     110
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!I89",
+   "label": "新增在建工程",
+   "drives": [],
+   "collapse_on_missing": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "required_cols": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "D": [
+     4,
+     70,
+     71
+    ],
+    "E": [
+     4,
+     70,
+     71
+    ],
+    "F": [
+     4,
+     70,
+     71
+    ],
+    "G": [
+     4,
+     70,
+     71
+    ],
+    "H": [
+     4,
+     70,
+     71
+    ]
+   },
+   "collapse_cells": {
+    "D": [
+     4
+    ],
+    "E": [
+     4
+    ],
+    "F": [
+     4
+    ],
+    "G": [
+     4
+    ],
+    "H": [
+     4
+    ]
+   },
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!I9",
+   "label": "其他财务费用",
+   "drives": [
+    "dcf",
+    "pe"
+   ],
+   "collapse_on_missing": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "required_cols": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "D": [
+     4,
+     10,
+     43,
+     87,
+     106,
+     107
+    ],
+    "E": [
+     4,
+     10,
+     43,
+     87,
+     106,
+     107
+    ],
+    "F": [
+     4,
+     10,
+     43,
+     87,
+     106,
+     107
+    ],
+    "G": [
+     4,
+     10,
+     43,
+     87,
+     106,
+     107
+    ],
+    "H": [
+     4,
+     10,
+     43,
+     87,
+     106,
+     107
+    ]
+   },
+   "collapse_cells": {
+    "D": [
+     4
+    ],
+    "E": [
+     4
+    ],
+    "F": [
+     4
+    ],
+    "G": [
+     4
+    ],
+    "H": [
+     4
+    ]
+   },
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!I90",
+   "label": "固定资产折旧年限",
+   "drives": [
+    "dcf",
+    "pe"
+   ],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "D": [
+     69,
+     73,
+     74,
+     75,
+     137
+    ],
+    "E": [
+     69,
+     73,
+     74,
+     75,
+     137
+    ],
+    "F": [
+     69,
+     73,
+     74,
+     75,
+     137
+    ],
+    "G": [
+     69,
+     73,
+     74,
+     75,
+     137
+    ],
+    "H": [
+     69,
+     73,
+     74,
+     75,
+     137
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!I91",
+   "label": "新增固定资产",
+   "drives": [],
+   "collapse_on_missing": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "required_cols": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "D": [
+     4,
+     69,
+     73,
+     74,
+     75
+    ],
+    "E": [
+     4,
+     69,
+     73,
+     74,
+     75
+    ],
+    "F": [
+     4,
+     69,
+     73,
+     74,
+     75
+    ],
+    "G": [
+     4,
+     69,
+     73,
+     74,
+     75
+    ],
+    "H": [
+     4,
+     69,
+     73,
+     74,
+     75
+    ]
+   },
+   "collapse_cells": {
+    "D": [
+     4
+    ],
+    "E": [
+     4
+    ],
+    "F": [
+     4
+    ],
+    "G": [
+     4
+    ],
+    "H": [
+     4
+    ]
+   },
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!I95",
+   "label": "无形资产摊销年限",
+   "drives": [
+    "dcf",
+    "pe"
+   ],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "D": [
+     76,
+     77,
+     138
+    ],
+    "E": [
+     76,
+     77,
+     138
+    ],
+    "F": [
+     76,
+     77,
+     138
+    ],
+    "G": [
+     76,
+     77,
+     138
+    ],
+    "H": [
+     76,
+     77,
+     138
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!I96",
+   "label": "新增无形资产",
+   "drives": [],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "C": [
+     76,
+     77
+    ],
+    "D": [
+     76,
+     77
+    ],
+    "E": [
+     76,
+     77
+    ],
+    "F": [
+     76,
+     77
+    ],
+    "G": [
+     76,
+     77
+    ],
+    "H": [
+     76,
+     77
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!I99",
+   "label": "长期待摊费用摊销年限",
+   "drives": [
+    "dcf",
+    "pe"
+   ],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "D": [
+     79,
+     139
+    ],
+    "E": [
+     79,
+     139
+    ],
+    "F": [
+     79,
+     139
+    ],
+    "G": [
+     79,
+     139
+    ],
+    "H": [
+     79,
+     139
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!J105",
+   "label": "新增长期借款",
+   "drives": [],
+   "collapse_on_missing": [
+    "G",
+    "H"
+   ],
+   "required_cols": [
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "G": [
+     61,
+     69,
+     70,
+     71,
+     73,
+     74,
+     75,
+     76,
+     77,
+     78,
+     79,
+     83,
+     106,
+     107
+    ],
+    "H": [
+     61,
+     69,
+     70,
+     71,
+     73,
+     74,
+     75,
+     76,
+     77,
+     78,
+     79,
+     83,
+     106,
+     107
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": [
+    "G",
+    "H"
+   ]
+  },
+  {
+   "cell": "假设!J11",
+   "label": "加：信用减值损失（损失以'-'填列）",
+   "drives": [],
+   "collapse_on_missing": [
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "required_cols": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "D": [
+     4,
+     14
+    ],
+    "E": [
+     4,
+     14
+    ],
+    "F": [
+     4,
+     14
+    ],
+    "G": [
+     4,
+     14
+    ],
+    "H": [
+     4,
+     14
+    ]
+   },
+   "collapse_cells": {
+    "E": [
+     4
+    ],
+    "F": [
+     4
+    ],
+    "G": [
+     4
+    ],
+    "H": [
+     4
+    ]
+   },
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!J12",
+   "label": "公允价值变动净收益",
+   "drives": [],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "G": [
+     15
+    ],
+    "H": [
+     15
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!J13",
+   "label": "投资净收益(对联营合营企业投资收益)",
+   "drives": [],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "D": [
+     18
+    ],
+    "E": [
+     18
+    ],
+    "F": [
+     18
+    ],
+    "G": [
+     18
+    ],
+    "H": [
+     18
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!J14",
+   "label": "投资净收益(其他)",
+   "drives": [],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "D": [
+     17,
+     18
+    ],
+    "E": [
+     17,
+     18
+    ],
+    "F": [
+     17,
+     18
+    ],
+    "G": [
+     17,
+     18
+    ],
+    "H": [
+     17,
+     18
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!J16",
+   "label": "资产处置收益",
+   "drives": [],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "D": [
+     19
+    ],
+    "E": [
+     19
+    ],
+    "F": [
+     19
+    ],
+    "G": [
+     19
+    ],
+    "H": [
+     19
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!J17",
+   "label": "营业外收入",
+   "drives": [],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "D": [
+     22
+    ],
+    "E": [
+     22
+    ],
+    "F": [
+     22
+    ],
+    "G": [
+     22
+    ],
+    "H": [
+     22
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!J18",
+   "label": "营业外支出",
+   "drives": [],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "F": [
+     23
+    ],
+    "G": [
+     23
+    ],
+    "H": [
+     23
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!J19",
+   "label": "税率",
+   "drives": [],
+   "collapse_on_missing": [
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "required_cols": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "D": [
+     25,
+     26
+    ],
+    "E": [
+     25,
+     26
+    ],
+    "F": [
+     25,
+     26
+    ],
+    "G": [
+     25,
+     26
+    ],
+    "H": [
+     25,
+     26
+    ]
+   },
+   "collapse_cells": {
+    "E": [
+     25
+    ],
+    "F": [
+     25
+    ],
+    "G": [
+     25
+    ],
+    "H": [
+     25
+    ]
+   },
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!J21",
+   "label": "少数股东损益",
+   "drives": [],
+   "collapse_on_missing": [
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "required_cols": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "D": [
+     28,
+     29
+    ],
+    "E": [
+     28,
+     29
+    ],
+    "F": [
+     28,
+     29
+    ],
+    "G": [
+     28,
+     29
+    ],
+    "H": [
+     28,
+     29
+    ]
+   },
+   "collapse_cells": {
+    "E": [
+     28
+    ],
+    "F": [
+     28
+    ],
+    "G": [
+     28
+    ],
+    "H": [
+     28
+    ]
+   },
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!J22",
+   "label": "每股派现",
+   "drives": [],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "E": [
+     33
+    ],
+    "F": [
+     33
+    ],
+    "G": [
+     33
+    ],
+    "H": [
+     33
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!J23",
+   "label": "现金分红率(%)",
+   "drives": [],
+   "collapse_on_missing": [
+    "F",
+    "G",
+    "H"
+   ],
+   "required_cols": [
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "E": [
+     30,
+     33,
+     118
+    ],
+    "F": [
+     30,
+     33,
+     118
+    ],
+    "G": [
+     30,
+     33,
+     118
+    ],
+    "H": [
+     30,
+     33,
+     118
+    ]
+   },
+   "collapse_cells": {
+    "F": [
+     30,
+     118
+    ],
+    "G": [
+     30,
+     118
+    ],
+    "H": [
+     30,
+     118
+    ]
+   },
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!J24",
+   "label": "盈余公积金",
+   "drives": [],
+   "collapse_on_missing": [
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "required_cols": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "D": [
+     28,
+     126
+    ],
+    "E": [
+     28,
+     126
+    ],
+    "F": [
+     28,
+     126
+    ],
+    "G": [
+     28,
+     126
+    ],
+    "H": [
+     28,
+     126
+    ]
+   },
+   "collapse_cells": {
+    "E": [
+     28
+    ],
+    "F": [
+     28
+    ],
+    "G": [
+     28
+    ],
+    "H": [
+     28
+    ]
+   },
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!J31",
+   "label": "交易性金融资产",
+   "drives": [],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "E": [
+     44
+    ],
+    "F": [
+     44
+    ],
+    "G": [
+     44
+    ],
+    "H": [
+     44
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!J35",
+   "label": "应收账款",
+   "drives": [],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "E": [
+     47
+    ],
+    "F": [
+     4,
+     47
+    ],
+    "G": [
+     4,
+     47
+    ],
+    "H": [
+     4,
+     47
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!J41",
+   "label": "合同资产",
+   "drives": [],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "D": [
+     55
+    ],
+    "E": [
+     4,
+     55
+    ],
+    "F": [
+     4,
+     55
+    ],
+    "G": [
+     4,
+     55
+    ],
+    "H": [
+     4,
+     55
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!J46",
+   "label": "债权投资",
+   "drives": [],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "E": [
+     61
+    ],
+    "F": [
+     61
+    ],
+    "G": [
+     61
+    ],
+    "H": [
+     61
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!J5",
+   "label": "营业税金及附加",
+   "drives": [],
+   "collapse_on_missing": [
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "required_cols": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "D": [
+     4,
+     6
+    ],
+    "E": [
+     4,
+     6
+    ],
+    "F": [
+     4,
+     6
+    ],
+    "G": [
+     4,
+     6
+    ],
+    "H": [
+     4,
+     6
+    ]
+   },
+   "collapse_cells": {
+    "E": [
+     4
+    ],
+    "F": [
+     4
+    ],
+    "G": [
+     4
+    ],
+    "H": [
+     4
+    ]
+   },
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!J52",
+   "label": "投资性房地产",
+   "drives": [],
+   "collapse_on_missing": [
+    "H"
+   ],
+   "required_cols": [
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "E": [
+     67
+    ],
+    "F": [
+     67
+    ],
+    "G": [
+     67
+    ],
+    "H": [
+     67
+    ]
+   },
+   "collapse_cells": {
+    "H": [
+     67
+    ]
+   },
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!J55",
+   "label": "商誉",
+   "drives": [],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "H"
+   ],
+   "col_rows": {
+    "H": [
+     78
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!J58",
+   "label": "其他非流动资产",
+   "drives": [],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "E": [
+     61,
+     83
+    ],
+    "F": [
+     61,
+     83
+    ],
+    "G": [
+     61,
+     83
+    ],
+    "H": [
+     61,
+     83
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!J6",
+   "label": "营业费用",
+   "drives": [],
+   "collapse_on_missing": [
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "required_cols": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "D": [
+     4,
+     7
+    ],
+    "E": [
+     4,
+     7
+    ],
+    "F": [
+     4,
+     7
+    ],
+    "G": [
+     4,
+     7
+    ],
+    "H": [
+     4,
+     7
+    ]
+   },
+   "collapse_cells": {
+    "E": [
+     4
+    ],
+    "F": [
+     4
+    ],
+    "G": [
+     4
+    ],
+    "H": [
+     4
+    ]
+   },
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!J67",
+   "label": "预收账款",
+   "drives": [],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "F": [
+     93
+    ],
+    "G": [
+     5,
+     93
+    ],
+    "H": [
+     5,
+     93
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!J68",
+   "label": "合同负债",
+   "drives": [],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "H"
+   ],
+   "col_rows": {
+    "H": [
+     94
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!J69",
+   "label": "递延收益",
+   "drives": [],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "G": [
+     101
+    ],
+    "H": [
+     101
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!J7",
+   "label": "管理费用",
+   "drives": [],
+   "collapse_on_missing": [
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "required_cols": [
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "E": [
+     4,
+     8
+    ],
+    "F": [
+     4,
+     8
+    ],
+    "G": [
+     4,
+     8
+    ],
+    "H": [
+     4,
+     8
+    ]
+   },
+   "collapse_cells": {
+    "E": [
+     4
+    ],
+    "F": [
+     4
+    ],
+    "G": [
+     4
+    ],
+    "H": [
+     4
+    ]
+   },
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!J8",
+   "label": "研发费用",
+   "drives": [],
+   "collapse_on_missing": [
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "required_cols": [
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "E": [
+     4,
+     9
+    ],
+    "F": [
+     4,
+     9
+    ],
+    "G": [
+     4,
+     9
+    ],
+    "H": [
+     4,
+     9
+    ]
+   },
+   "collapse_cells": {
+    "E": [
+     4
+    ],
+    "F": [
+     4
+    ],
+    "G": [
+     4
+    ],
+    "H": [
+     4
+    ]
+   },
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!J80",
+   "label": "专项应付款",
+   "drives": [],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "G": [
+     110
+    ],
+    "H": [
+     110
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!J89",
+   "label": "新增在建工程",
+   "drives": [],
+   "collapse_on_missing": [
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "required_cols": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "D": [
+     4,
+     70,
+     71
+    ],
+    "E": [
+     4,
+     70,
+     71
+    ],
+    "F": [
+     4,
+     70,
+     71
+    ],
+    "G": [
+     4,
+     70,
+     71
+    ],
+    "H": [
+     4,
+     70,
+     71
+    ]
+   },
+   "collapse_cells": {
+    "E": [
+     4
+    ],
+    "F": [
+     4
+    ],
+    "G": [
+     4
+    ],
+    "H": [
+     4
+    ]
+   },
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!J9",
+   "label": "其他财务费用",
+   "drives": [],
+   "collapse_on_missing": [
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "required_cols": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "D": [
+     4,
+     10,
+     43,
+     87,
+     106,
+     107
+    ],
+    "E": [
+     4,
+     10,
+     43,
+     87,
+     106,
+     107
+    ],
+    "F": [
+     4,
+     10,
+     43,
+     87,
+     106,
+     107
+    ],
+    "G": [
+     4,
+     10,
+     43,
+     87,
+     106,
+     107
+    ],
+    "H": [
+     4,
+     10,
+     43,
+     87,
+     106,
+     107
+    ]
+   },
+   "collapse_cells": {
+    "E": [
+     4
+    ],
+    "F": [
+     4
+    ],
+    "G": [
+     4
+    ],
+    "H": [
+     4
+    ]
+   },
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!J90",
+   "label": "固定资产折旧年限",
+   "drives": [],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "D": [
+     69,
+     73,
+     74,
+     75,
+     137
+    ],
+    "E": [
+     69,
+     73,
+     74,
+     75,
+     137
+    ],
+    "F": [
+     69,
+     73,
+     74,
+     75,
+     137
+    ],
+    "G": [
+     69,
+     73,
+     74,
+     75,
+     137
+    ],
+    "H": [
+     69,
+     73,
+     74,
+     75,
+     137
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!J91",
+   "label": "新增固定资产",
+   "drives": [],
+   "collapse_on_missing": [
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "required_cols": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "D": [
+     4,
+     69,
+     73,
+     74,
+     75
+    ],
+    "E": [
+     4,
+     69,
+     73,
+     74,
+     75
+    ],
+    "F": [
+     4,
+     69,
+     73,
+     74,
+     75
+    ],
+    "G": [
+     4,
+     69,
+     73,
+     74,
+     75
+    ],
+    "H": [
+     4,
+     69,
+     73,
+     74,
+     75
+    ]
+   },
+   "collapse_cells": {
+    "E": [
+     4
+    ],
+    "F": [
+     4
+    ],
+    "G": [
+     4
+    ],
+    "H": [
+     4
+    ]
+   },
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!J95",
+   "label": "无形资产摊销年限",
+   "drives": [],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "D": [
+     76,
+     77,
+     138
+    ],
+    "E": [
+     76,
+     77,
+     138
+    ],
+    "F": [
+     76,
+     77,
+     138
+    ],
+    "G": [
+     76,
+     77,
+     138
+    ],
+    "H": [
+     76,
+     77,
+     138
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!J96",
+   "label": "新增无形资产",
+   "drives": [],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "C": [
+     76,
+     77
+    ],
+    "D": [
+     76,
+     77
+    ],
+    "E": [
+     76,
+     77
+    ],
+    "F": [
+     76,
+     77
+    ],
+    "G": [
+     76,
+     77
+    ],
+    "H": [
+     76,
+     77
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  },
+  {
+   "cell": "假设!J99",
+   "label": "长期待摊费用摊销年限",
+   "drives": [],
+   "collapse_on_missing": [],
+   "required_cols": [
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "col_rows": {
+    "D": [
+     79,
+     139
+    ],
+    "E": [
+     79,
+     139
+    ],
+    "F": [
+     79,
+     139
+    ],
+    "G": [
+     79,
+     139
+    ],
+    "H": [
+     79,
+     139
+    ]
+   },
+   "collapse_cells": {},
+   "range_collapse_only": []
+  }
+ ],
+ "method_cells": "在单个 Excel 会话内逐格清空 年度数据 中被假设引用的 214 个单元格，每次 CalculateFull 后读取全部 65 个假设并与基线比较，然后还原。",
+ "why_cells": "整列缺失与单格缺失是两种故障：单格是否致命取决于它是除数还是加数。实测 214 格中仅 24 格致命，55 格完全无影响，其余只是稀释。",
+ "consistency": "单格致命集合 ⊆ 整列致命集合（逐列核对）。唯一例外是假设!J105：它对一个区间取平均，缺一格被忽略，缺整列才 #DIV/0!，故记入 range_collapse_only。",
+ "fatal_rows": {
+  "4": [
+   "假设!I11",
+   "假设!I5",
+   "假设!I6",
+   "假设!I89",
+   "假设!I9",
+   "假设!I91",
+   "假设!J11",
+   "假设!J5",
+   "假设!J6",
+   "假设!J7",
+   "假设!J8",
+   "假设!J89",
+   "假设!J9",
+   "假设!J91"
+  ],
+  "25": [
+   "假设!I19",
+   "假设!J19"
+  ],
+  "28": [
+   "假设!I21",
+   "假设!I24",
+   "假设!J21",
+   "假设!J24"
+  ],
+  "30": [
+   "假设!I23",
+   "假设!J23"
+  ],
+  "67": [
+   "假设!I52",
+   "假设!J52"
+  ],
+  "118": [
+   "假设!I23",
+   "假设!J23"
+  ]
+ }
+}

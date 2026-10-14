@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A股估值模型</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header>
+  <h1>A股估值模型</h1>
+  <p class="sub">上传财报 PDF，生成填好数据的估值模型。</p>
+</header>
+
+<main>
+  {% if not template %}
+  <div class="alert alert-error">
+    没找到估值模型模板（.xlsm）。请把「开源_A股估值模型(非金融)_*.xlsm」放进项目的「原件」文件夹，再刷新本页。
+  </div>
+  {% endif %}
+
+  <section class="card">
+    <h2>上传财报 PDF</h2>
+    <form id="uploadForm">
+      <div id="drop" class="drop">
+        <p>把 PDF 拖到这里，或 <label class="link">点击选择文件
+          <input type="file" id="fileInput" multiple accept=".pdf,application/pdf" hidden>
+        </label></p>
+      </div>
+      <ul id="fileList" class="filelist"></ul>
+      <div class="row" style="margin-top:12px">
+        <button type="submit" id="uploadBtn" {% if not template %}disabled{% endif %}>上传</button>
+      </div>
+    </form>
+    <div id="uploadMsg" class="msg"></div>
+  </section>
+
+  {% if tasks %}
+  <section class="card">
+    <h2>历史任务</h2>
+    <table>
+      <thead>
+        <tr><th>时间</th><th>公司</th><th>报告期</th><th>结果</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for t in tasks %}
+        <tr>
+          <td>{{ t.created_at }}</td>
+          <td>{{ t.company_name or '—' }}</td>
+          <td>{{ t.report_period or '—' }}</td>
+          <td><span class="badge {{ t.status }}">{{ status_cn(t.status) }}</span></td>
+          <td><a href="{{ url_for('task_page', task_id=t.id) }}">打开</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+  {% endif %}
+</main>
+
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

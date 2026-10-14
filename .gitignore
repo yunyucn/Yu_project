@@ -1,0 +1,9 @@
+# Web 运行时生成的任务库、上传文件、产出文件和日志
+data/
+
+# Python 缓存与临时文件
+__pycache__/
+*.py[cod]
+*.tmp-xlsm
+*.log
+

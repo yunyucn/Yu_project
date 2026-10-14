@@ -1,0 +1,4 @@
+# 依赖由项目根目录的 requirements.txt 统一管理。
+# 流水线本身不再需要 pywin32：写工作簿由 scripts/com_excel.py（纯 Python）完成。
+pdfplumber>=0.11
+openpyxl>=3.1

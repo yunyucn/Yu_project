@@ -1,0 +1,207 @@
+{
+ "version": "1.1.0",
+ "description": "出厂残留清理清单。模板自带样本公司全套数据，必须清干净后再写入新公司，否则静默泄漏。",
+ "origin_residue": {
+  "company": "科顺股份",
+  "code": "300737.SZ",
+  "years": "2017-2022"
+ },
+ "actions": [
+  {
+   "tier": "P0",
+   "sheet": "年度数据",
+   "action": "replace",
+   "rows_from": "mapping.json",
+   "note": "根输入面，197 个数据行 × C:H。不含表头行（C1:H1 是公式，禁止覆盖）。"
+  },
+  {
+   "tier": "P0",
+   "sheet": "目录",
+   "cells": [
+    "C6",
+    "F6",
+    "F8",
+    "F9",
+    "F12"
+   ],
+   "action": "replace",
+   "note": "股票代码/简称/总股本/流通股本/收盘价。C7 报告期与 F15/F16 汇率另由参数给定。"
+  },
+  {
+   "tier": "P0",
+   "sheet": "目录",
+   "cells": [
+    "C7"
+   ],
+   "action": "replace",
+   "note": "最新年报报告期，驱动 6 年窗口"
+  },
+  {
+   "tier": "P0",
+   "sheet": "假设",
+   "cells": [
+    "I3",
+    "J3",
+    "AN3",
+    "AO3"
+   ],
+   "action": "blank",
+   "note": "C 类：营收增长率。样本公司残留 0.0921/0.1579/0.1734，必须清成空白交由分析师填。"
+  },
+  {
+   "tier": "P0",
+   "sheet": "假设",
+   "cells": [
+    "I4"
+   ],
+   "action": "blank",
+   "note": "C 类：营业成本率，残留 0.8231"
+  },
+  {
+   "tier": "P0",
+   "sheet": "假设",
+   "cells": [
+    "I7",
+    "I8"
+   ],
+   "action": "blank",
+   "note": "C 类：管理费用率 0.0369 / 研发费用率 0.0409"
+  },
+  {
+   "tier": "P0",
+   "sheet": "假设",
+   "cells": [
+    "I105"
+   ],
+   "action": "blank",
+   "note": "C 类：新增长期借款率，残留 0.3147"
+  },
+  {
+   "tier": "P0",
+   "sheet": "假设",
+   "cells": [
+    "I55",
+    "I68",
+    "I79",
+    "I81"
+   ],
+   "action": "replace",
+   "note": "A′ 类：商誉/合同负债/递延所得税负债/预计负债。实为年报事实但被硬编码，必须自动更新。"
+  },
+  {
+   "tier": "P1",
+   "sheet": "年度数据",
+   "action": "blank_literals",
+   "range": "O3:T224",
+   "note": "样本公司数据的隐藏镜像块（列宽 0、不在打印区）。实测零公式引用、零图表引用、零定义名称引用；清空与否不影响任何结论，纯粹是出厂残留，留着会被当成新公司的数据。"
+  },
+  {
+   "tier": "P1",
+   "sheet": "数据输入",
+   "action": "blank_literals",
+   "range": "C3:H294",
+   "note": "元单位原始数据。与估值隔离，但会误导，建议清空。"
+  },
+  {
+   "tier": "P1",
+   "sheet": "报告期历史数据",
+   "action": "blank_literals",
+   "range": "C4:IU767",
+   "note": "季度历史。清空样板公司残留，随后由季度通道（mapping_quarterly.json）按报告期重填。它**不是**与估值隔离的表：报告期利润变化 的 240 个公式只读这张表，年度数据!I36:I38 也读它的 S 列。清空必须在写入之前，顺序见 run_pipeline 第 2 步与第 9 步。",
+   "filled_by": "quarterly.py + write_model.py --quarterly"
+  },
+  {
+   "tier": "P1",
+   "sheet": "数据输入季度数据",
+   "action": "blank_literals",
+   "range": "B3:N335",
+   "note": "季度原始数据（元）。它是 提取 按钮联网抓数的落点，模板里只有 假设!I137 读它的 L117/L35（2026-06-30 的股本与每股转增）。当前窗口下这两格为空，读出来是 0，所以本版仍清空、不写入；需要时再开一条同样的通道。"
+  },
+  {
+   "tier": "P1",
+   "sheet": "收入成本预测",
+   "action": "blank_literals",
+   "range": "A12:A42",
+   "note": "产品名（硬编码文本）。需按新公司产品线重填。"
+  },
+  {
+   "tier": "P1",
+   "sheet": "收入成本预测",
+   "action": "blank_literals",
+   "range": "D12:L42",
+   "note": "产品收入数据。注意：该表不参与估值计算（实测隔离）。"
+  },
+  {
+   "tier": "P1",
+   "sheet": "收入成本预测",
+   "action": "blank_literals",
+   "range": "A52:A82"
+  },
+  {
+   "tier": "P1",
+   "sheet": "收入成本预测",
+   "action": "blank_literals",
+   "range": "D52:L82"
+  },
+  {
+   "tier": "P1",
+   "sheet": "主营业务",
+   "action": "blank_literals",
+   "range": "B3:E18",
+   "note": "产品分类映射表，样本为软件产品/技术服务。"
+  },
+  {
+   "tier": "P1",
+   "sheet": "情景表",
+   "action": "blank_literals",
+   "range": "B3:D82",
+   "note": "样本情景快照"
+  },
+  {
+   "tier": "P2",
+   "sheet": "假设",
+   "cells": [
+    "I88",
+    "I92",
+    "I93",
+    "I104",
+    "I109",
+    "I110",
+    "I111"
+   ],
+   "action": "keep",
+   "note": "通用业务参数（建设期/残值率/利息资本化率/还款期限/贷款利率）。非公司特定，保留；利率偏旧可提示复核。"
+  },
+  {
+   "tier": "P2",
+   "sheet": "绝对估值",
+   "cells": [
+    "B2",
+    "B3",
+    "B4",
+    "B5",
+    "B6",
+    "B7",
+    "B9"
+   ],
+   "action": "keep",
+   "note": "通用估值默认值（过渡期/永续增长/β/Rf/Rm/债券利率）。B8 是公式，勿动。"
+  }
+ ],
+ "preserve": {
+  "note": "以下内容在任何情况下都不得修改",
+  "items": [
+   "所有工作表公式",
+   "VBA 工程 (vbaProject.bin)",
+   "166 个 ActiveX 控件",
+   "31 个图表",
+   "231 个定义名称",
+   "5 个外部链接",
+   "工作表结构与顺序",
+   "calcPr iterate 设置"
+  ]
+ },
+ "_verification": {
+  "O3:T224": "197 行 × 6 列，逐格与原件一致；扰动实验（写同值/清空回写/改无关表）产生完全相同的 591 处差异，证明与模型无关。证据：_analysis/_ot_perturb.txt"
+ }
+}

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ task.company_name or '任务' }} · A股估值模型</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body data-task="{{ task.id }}">
+<header>
+  <p class="crumb"><a href="{{ url_for('index') }}">← 返回首页</a></p>
+  <h1>{{ task.company_name or '未识别公司' }}{% if task.report_period %} · {{ task.report_period }}{% endif %}</h1>
+</header>
+
+<main>
+  {% set blocked = files | selectattr('blocking') | list %}
+  {% if blocked %}
+  <div class="alert alert-error">
+    <strong>有 {{ blocked|length }} 份文件对不上，不能开始</strong>
+    <ul class="alert-body">
+      {% for f in blocked %}<li>{{ f.orig_name }}：{{ f.why }}</li>{% endfor %}
+    </ul>
+  </div>
+  {% elif options.get('interim_only') %}
+  <div class="alert alert-warn">这批文件里没有年报，只能填「报告期历史数据」。</div>
+  {% endif %}
+
+  <section class="card">
+    <h2>第一步 · 核对文件</h2>
+    <table>
+      <thead><tr><th>文件</th><th>类型</th><th>报告期</th></tr></thead>
+      <tbody>
+        {% for f in files %}
+        <tr>
+          <td>{{ f.orig_name }}</td>
+          <td>{{ f.kind_cn or '认不出' }}</td>
+          <td>{{ f.period or '—' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  {% set market = options.get('market') or {} %}
+
+  <section class="card">
+    <h2>第二步 · 核对信息</h2>
+    <div class="grid">
+      <label class="f"><span>公司名称</span>
+        <input type="text" id="company_name" value="{{ options.get('company_name') or '' }}"></label>
+      <label class="f"><span>股票代码</span>
+        <input type="text" id="company_code" value="{{ options.get('company_code') or '' }}"></label>
+      <label class="f"><span>报告期</span>
+        <input type="text" id="report_period" placeholder="2025-12-31"
+               value="{{ options.get('report_period') or '' }}"></label>
+      <label class="f"><span>总股本（百万股）</span>
+        <input type="number" step="any" id="total_shares_mn"
+               value="{{ market.get('total_shares_mn') if market.get('total_shares_mn') is not none else '' }}"></label>
+      <label class="f"><span>流通股本（百万股）</span>
+        <input type="number" step="any" id="float_shares_mn"
+               value="{{ market.get('float_shares_mn') if market.get('float_shares_mn') is not none else '' }}"></label>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>生成估值模型</h2>
+    <p>历年股价用于比较历史估值，预测假设用于测算未来三年的结果。</p>
+    <div class="row">
+      <button id="startBtn" {% if blocked %}disabled{% endif %}>生成估值模型</button>
+    </div>
+    <div id="startMsg" class="msg"></div>
+    <div id="progressWrap" style="display:none;margin-top:16px">
+      <div class="bar"><i id="bar"></i></div>
+      <p class="steps" id="stepText"></p>
+    </div>
+  </section>
+
+  <section class="card" id="resultCard" style="display:none">
+    <h2>结果</h2>
+    <p id="resultMessage" role="status"></p>
+    <div class="row" style="margin-top:16px">
+      <a id="downloadLink" style="display:none"><button id="downloadBtn">下载模型文件</button></a>
+      <a class="btnlink" href="{{ url_for('index') }}">返回首页</a>
+    </div>
+  </section>
+</main>
+
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

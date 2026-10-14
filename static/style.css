@@ -1,0 +1,92 @@
+:root {
+  --bg: #f5f6f8;
+  --card: #ffffff;
+  --line: #e3e6ea;
+  --text: #1f2329;
+  --muted: #6b7280;
+  --brand: #2563eb;
+  --ok: #16a34a;
+  --warn: #d97706;
+  --err: #dc2626;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font: 14px/1.6 "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+}
+header { background: #fff; border-bottom: 1px solid var(--line); padding: 20px 32px; }
+header h1 { margin: 0; font-size: 20px; }
+header .sub { margin: 4px 0 0; color: var(--muted); }
+/* 每个页面都要能退回去：办公人员不认浏览器的后退键。 */
+header .crumb { margin: 0 0 6px; font-size: 13px; }
+header .crumb a { color: var(--brand); text-decoration: none; }
+header .crumb a:hover { text-decoration: underline; }
+main { max-width: 980px; margin: 24px auto; padding: 0 16px 64px; }
+.card {
+  background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+  padding: 20px 24px; margin-bottom: 20px;
+}
+.card h2 { margin: 0 0 14px; font-size: 16px; }
+.card p { margin: 0; color: #374151; }
+.hint { color: var(--muted); font-size: 13px; }
+.drop {
+  border: 2px dashed var(--line); border-radius: 10px; padding: 28px;
+  text-align: center; background: #fafbfc; transition: .15s;
+}
+.drop.over { border-color: var(--brand); background: #eff6ff; }
+.link { color: var(--brand); cursor: pointer; text-decoration: underline; }
+button {
+  background: var(--brand); color: #fff; border: 0; border-radius: 8px;
+  padding: 10px 20px; font-size: 14px; cursor: pointer;
+}
+button:disabled { background: #9aa4b2; cursor: not-allowed; }
+a.btnlink {
+  display: inline-block; padding: 10px 20px; border-radius: 8px;
+  font-size: 14px; text-decoration: none; background: #fff;
+  color: var(--text); border: 1px solid var(--line);
+}
+a.btnlink:hover { border-color: var(--brand); color: var(--brand); }
+.filelist { list-style: none; padding: 0; margin: 12px 0; }
+.filelist li { padding: 6px 0; border-bottom: 1px dashed var(--line); }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+th { color: var(--muted); font-weight: 500; }
+.msg { margin-top: 12px; }
+.alert { border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; }
+.alert-error { background: #fef2f2; color: var(--err); border: 1px solid #fecaca; }
+.alert-warn { background: #fffbeb; color: var(--warn); border: 1px solid #fde68a; }
+.alert-body { margin: 8px 0 0; font-size: 13px; }
+.alert-body ul { margin: 4px 0 0; padding-left: 18px; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; }
+.badge.uploaded { background: #eef2ff; color: #4338ca; }
+.badge.queued { background: #fef9c3; color: #a16207; }
+.badge.running { background: #dbeafe; color: #1d4ed8; }
+.badge.done { background: #dcfce7; color: #15803d; }
+.badge.review, .badge.uploading { background: #fef9c3; color: #854d0e; }
+.remove-file { background: transparent; color: var(--brand); padding: 2px 8px; }
+.badge.stopped { background: #fee2e2; color: #b91c1c; }
+.badge.failed { background: #f3f4f6; color: #374151; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+label.f { display: block; }
+label.f span { display: block; color: var(--muted); font-size: 12px; margin-bottom: 4px; }
+input[type=text], input[type=number] {
+  width: 100%; padding: 8px 10px; border: 1px solid var(--line);
+  border-radius: 6px; font-size: 14px;
+}
+.bar { height: 10px; background: #eef1f5; border-radius: 999px; overflow: hidden; }
+.bar > i { display: block; height: 100%; background: var(--brand); width: 0; transition: .3s; }
+.steps { color: var(--muted); font-size: 13px; margin-top: 8px; }
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.verdict { border-radius: 10px; padding: 16px 20px; }
+.verdict.ok { background: #f0fdf4; border: 1px solid #bbf7d0; }
+.verdict.warn { background: #fffbeb; border: 1px solid #fde68a; }
+.verdict.bad { background: #fef2f2; border: 1px solid #fecaca; }
+.verdict h3 { margin: 0; font-size: 19px; }
+.verdict.ok h3 { color: #15803d; }
+.verdict.warn h3 { color: #b45309; }
+.verdict.bad h3 { color: #b91c1c; }
+.verdict .why { color: #374151; font-size: 13px; margin: 8px 0 0; }
+.verdict table.fills { margin-top: 12px; font-size: 13px; }
+.verdict table.fills th, .verdict table.fills td { border-bottom: 1px solid var(--line); }
+.verdict table.fills th { background: transparent; }
+.verdict table.fills td.empty { color: var(--err); }

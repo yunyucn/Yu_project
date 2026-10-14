@@ -1,0 +1,29 @@
+# A股估值模型填充 · Web 版
+#
+#   docker compose up -d --build     起服务，打开 http://<服务器IP>:8000
+#   docker compose logs -f           看日志
+#   docker compose down              停服务（任务数据留在 data/ 卷里）
+services:
+  valuation:
+    build: .
+    image: a-share-valuation-web:latest
+    container_name: a-share-valuation-web
+    ports:
+      - "${BIND_IP:-127.0.0.1}:8000:8000"
+    volumes:
+      # 任务库、上传的 PDF、产出的 .xlsm 全在这里。放在宿主机上，
+      # 重建镜像不会丢；办公人员下载的文件也在这里能找到原件。
+      - ./data:/app/data
+    restart: unless-stopped
+    init: true
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
