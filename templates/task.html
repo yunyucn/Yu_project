@@ -14,6 +14,8 @@
 
 <main>
   {% set blocked = files | selectattr('blocking') | list %}
+  {% set archived = task.deleted_at %}
+  {% if archived %}<div class="alert alert-warn">这个任务已归档，只能查看历史结果；需要继续使用请点击页面底部“恢复任务”。</div>{% endif %}
   {% if blocked %}
   <div class="alert alert-error">
     <strong>有 {{ blocked|length }} 份文件对不上，不能开始</strong>
@@ -39,11 +41,23 @@
         {% endfor %}
       </tbody>
     </table>
+    {% if not archived %}<form id="appendForm" class="append-form">
+      <div id="appendDrop" class="drop compact">
+        <p>追加 PDF：拖到这里，或 <label class="link">点击选择文件
+          <input type="file" id="appendInput" multiple accept=".pdf,application/pdf" hidden>
+        </label></p>
+      </div>
+      <ul id="appendList" class="filelist"></ul>
+      <div class="row">
+        <button type="submit" id="appendBtn">追加并重新识别</button>
+        <span id="appendMsg" class="msg"></span>
+      </div>
+    </form>{% endif %}
   </section>
 
   {% set market = options.get('market') or {} %}
 
-  <section class="card">
+  {% if not archived %}<section class="card">
     <h2>第二步 · 核对信息</h2>
     <div class="grid">
       <label class="f"><span>公司名称</span>
@@ -60,9 +74,9 @@
         <input type="number" step="any" id="float_shares_mn"
                value="{{ market.get('float_shares_mn') if market.get('float_shares_mn') is not none else '' }}"></label>
     </div>
-  </section>
+  </section>{% endif %}
 
-  <section class="card">
+  {% if not archived %}<section class="card">
     <h2>生成估值模型</h2>
     <p>历年股价用于比较历史估值，预测假设用于测算未来三年的结果。</p>
     <div class="row">
@@ -73,7 +87,7 @@
       <div class="bar"><i id="bar"></i></div>
       <p class="steps" id="stepText"></p>
     </div>
-  </section>
+  </section>{% endif %}
 
   <section class="card" id="resultCard" style="display:none">
     <h2>结果</h2>
@@ -81,6 +95,30 @@
     <div class="row" style="margin-top:16px">
       <a id="downloadLink" style="display:none"><button id="downloadBtn">下载模型文件</button></a>
       <a class="btnlink" href="{{ url_for('index') }}">返回首页</a>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>生成历史</h2>
+    <table id="runHistory">
+      <thead><tr><th>时间</th><th>状态</th><th>文件数</th><th>耗时</th><th></th></tr></thead>
+      <tbody>
+        {% for run in runs %}
+        <tr>
+          <td>{{ run.created_at }}</td>
+          <td><span class="badge {{ run.status }}">{{ status_cn(run.status) }}</span>{% if run.is_latest %}（当前）{% endif %}</td>
+          <td>{{ run.file_count or '—' }}</td>
+          <td>{{ run.duration_seconds or '—' }} 秒</td>
+          <td>{% if run.run_dir %}<a href="{{ url_for('api_run_download', task_id=task.id, run_id=run.id) }}">下载此版本</a>{% endif %}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="hint">还没有生成记录。</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="row" style="margin-top:16px">
+      {% if task.deleted_at %}<button type="button" id="restoreBtn" class="secondary">恢复任务</button>
+      {% else %}<button type="button" id="archiveBtn" class="secondary">归档任务</button>{% endif %}
     </div>
   </section>
 </main>

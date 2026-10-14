@@ -139,6 +139,11 @@ def _run(task_id):
     fields = dict(log_tail=tail[-4000:], verdict=artifacts['verdict'],
                   xlsm_path=artifacts['xlsm_path'], xlsm_name=artifacts['xlsm_name'],
                   step_name='已停止')
+    if artifacts.get('xlsm_path'):
+        try:
+            fields['run_output_sha256'] = config._sha256(artifacts['xlsm_path'])
+        except OSError:
+            fields['run_output_sha256'] = None
     if has_output and returncode in (0, 2) and not artifacts['intermediate']:
         review = (returncode != 0 or artifacts['passed'] is not True
                   or artifacts['accepted'] is not True
@@ -165,6 +170,8 @@ def _run(task_id):
                        readback_passed=artifacts['passed'], acceptance_passed=artifacts['accepted'],
                        needs_excel_recalc=artifacts['needs_excel_recalc']),
                   handle, ensure_ascii=False, indent=2)
+    output_sha256 = fields.pop('run_output_sha256', None)
     store.update_task(task_id, **fields)
     store.update_run(task.get('run_id'), status=fields['status'], message=fields['message'],
-                     finished_at=store._now())
+                     finished_at=store._now(), output_sha256=output_sha256,
+                     params_json=json.dumps(params, ensure_ascii=False))

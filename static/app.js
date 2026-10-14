@@ -91,10 +91,36 @@
           msg.innerHTML = "<span class='alert alert-error'>" + esc(err.message) + "</span>";
         });
     });
+
+    document.querySelectorAll('.archive-task').forEach(function (button) {
+      button.addEventListener('click', function () {
+        var id = button.dataset.task;
+        if (!window.confirm('归档这个历史任务？原始文件和生成结果会保留。')) return;
+        fetch('/api/tasks/' + id + '/archive', { method: 'POST' })
+          .then(readResponse).then(function () { window.location.reload(); })
+          .catch(function (err) { window.alert(err.message); });
+      });
+    });
+    document.querySelectorAll('.restore-task').forEach(function (button) {
+      button.addEventListener('click', function () {
+        fetch('/api/tasks/' + button.dataset.task + '/restore', { method: 'POST' })
+          .then(readResponse).then(function () { window.location.reload(); })
+          .catch(function (err) { window.alert(err.message); });
+      });
+    });
   }
 
   /* ---------------- 任务页 ---------------- */
   var body = document.body;
+  var pageTaskId = body.dataset.task;
+  var standaloneRestoreBtn = document.getElementById('restoreBtn');
+  if (standaloneRestoreBtn && pageTaskId) {
+    standaloneRestoreBtn.addEventListener('click', function () {
+      fetch('/api/tasks/' + pageTaskId + '/restore', { method: 'POST' })
+        .then(readResponse).then(function () { window.location.reload(); })
+        .catch(function (err) { window.alert(err.message); });
+    });
+  }
   var startBtn = document.getElementById("startBtn");
   if (startBtn && body.dataset.task) {
     var taskId = body.dataset.task;
@@ -111,6 +137,81 @@
     var polling = false;
     var blocked = startBtn.disabled;
     var sawRunning = false;   /* 这次打开页面时任务在跑，跑完才自动滚到结果 */
+
+    var appendForm = document.getElementById('appendForm');
+    if (appendForm) {
+      var appendInput = document.getElementById('appendInput');
+      var appendDrop = document.getElementById('appendDrop');
+      var appendList = document.getElementById('appendList');
+      var appendMsg = document.getElementById('appendMsg');
+      var appendBtn = document.getElementById('appendBtn');
+      var appendPicked = [];
+      function renderAppend() {
+        appendList.innerHTML = appendPicked.map(function (f, index) {
+          return '<li>' + esc(f.name) + ' <span class="hint">(' +
+                 (f.size / 1048576).toFixed(1) + ' MB)</span> ' +
+                 '<button type="button" class="remove-file" data-index="' + index + '">移除</button></li>';
+        }).join('');
+      }
+      function addAppendFiles(fl) {
+        for (var i = 0; i < fl.length; i++) {
+          var file = fl[i];
+          if (!file.name.toLowerCase().endsWith('.pdf')) continue;
+          if (!appendPicked.some(function (x) { return x.name === file.name && x.size === file.size; })) {
+            appendPicked.push(file);
+          }
+        }
+        renderAppend();
+      }
+      appendInput.addEventListener('change', function () { addAppendFiles(appendInput.files); appendInput.value = ''; });
+      appendList.addEventListener('click', function (event) {
+        if (event.target.matches('button[data-index]')) {
+          appendPicked.splice(Number(event.target.dataset.index), 1); renderAppend();
+        }
+      });
+      ['dragenter', 'dragover'].forEach(function (ev) {
+        appendDrop.addEventListener(ev, function (e) { e.preventDefault(); appendDrop.classList.add('over'); });
+      });
+      ['dragleave', 'drop'].forEach(function (ev) {
+        appendDrop.addEventListener(ev, function (e) { e.preventDefault(); appendDrop.classList.remove('over'); });
+      });
+      appendDrop.addEventListener('drop', function (e) { addAppendFiles(e.dataTransfer.files); });
+      appendForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+        if (!appendPicked.length || appendBtn.disabled) return;
+        var fd = new FormData();
+        appendPicked.forEach(function (f) { fd.append('files', f); });
+        appendBtn.disabled = true;
+        appendMsg.textContent = '正在追加并重新识别…';
+        fetch('/api/tasks/' + taskId + '/files', { method: 'POST', body: fd })
+          .then(readResponse).then(function (res) {
+            appendMsg.textContent = res.duplicates && res.duplicates.length ?
+              '已追加，重复文件已跳过：' + res.duplicates.join('、') : '已追加，文件识别完成。';
+            window.setTimeout(function () { window.location.reload(); }, 500);
+          }).catch(function (err) {
+            appendBtn.disabled = false;
+            appendMsg.innerHTML = "<span class='alert alert-error'>" + esc(err.message) + '</span>';
+          });
+      });
+    }
+
+    var archiveBtn = document.getElementById('archiveBtn');
+    if (archiveBtn) {
+      archiveBtn.addEventListener('click', function () {
+        if (!window.confirm('归档这个任务？原始文件和生成结果会保留。')) return;
+        fetch('/api/tasks/' + taskId + '/archive', { method: 'POST' })
+          .then(readResponse).then(function () { window.location.href = '/'; })
+          .catch(function (err) { startMsg.innerHTML = "<span class='alert alert-error'>" + esc(err.message) + '</span>'; });
+      });
+    }
+    var restoreBtn = document.getElementById('restoreBtn');
+    if (restoreBtn) {
+      restoreBtn.addEventListener('click', function () {
+        fetch('/api/tasks/' + taskId + '/restore', { method: 'POST' })
+          .then(readResponse).then(function () { window.location.reload(); })
+          .catch(function (err) { startMsg.innerHTML = "<span class='alert alert-error'>" + esc(err.message) + '</span>'; });
+      });
+    }
 
     function paint(t) {
       if (t.status === "uploaded") { progressWrap.style.display = "none"; return; }

@@ -34,6 +34,7 @@ main { max-width: 980px; margin: 24px auto; padding: 0 16px 64px; }
   text-align: center; background: #fafbfc; transition: .15s;
 }
 .drop.over { border-color: var(--brand); background: #eff6ff; }
+.drop.compact { padding: 16px; margin-top: 14px; }
 .link { color: var(--brand); cursor: pointer; text-decoration: underline; }
 button {
   background: var(--brand); color: #fff; border: 0; border-radius: 8px;
@@ -46,6 +47,10 @@ a.btnlink {
   color: var(--text); border: 1px solid var(--line);
 }
 a.btnlink:hover { border-color: var(--brand); color: var(--brand); }
+.secondary { background: #fff; color: var(--text); border: 1px solid var(--line); }
+.secondary:hover { border-color: var(--brand); color: var(--brand); }
+.archive-task { background: transparent; color: var(--err); padding: 2px 8px; margin-left: 8px; }
+.append-form { margin-top: 14px; }
 .filelist { list-style: none; padding: 0; margin: 12px 0; }
 .filelist li { padding: 6px 0; border-bottom: 1px dashed var(--line); }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -62,10 +67,11 @@ th { color: var(--muted); font-weight: 500; }
 .badge.queued { background: #fef9c3; color: #a16207; }
 .badge.running { background: #dbeafe; color: #1d4ed8; }
 .badge.done { background: #dcfce7; color: #15803d; }
-.badge.review, .badge.uploading { background: #fef9c3; color: #854d0e; }
+.badge.review, .badge.uploading, .badge.needs_review { background: #fef9c3; color: #854d0e; }
 .remove-file { background: transparent; color: var(--brand); padding: 2px 8px; }
 .badge.stopped { background: #fee2e2; color: #b91c1c; }
 .badge.failed { background: #f3f4f6; color: #374151; }
+.badge.deleted { background: #e5e7eb; color: #4b5563; }
 .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
 label.f { display: block; }
 label.f span { display: block; color: var(--muted); font-size: 12px; margin-bottom: 4px; }

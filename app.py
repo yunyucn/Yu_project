@@ -14,6 +14,7 @@
 Linux 部署：HOST=0.0.0.0 PORT=8000 python app.py
 """
 import io
+import json
 import os
 import re
 import logging
@@ -43,8 +44,9 @@ _initialized = False
 
 BAD_CHARS = re.compile(r'[\\/:*?"<>|\x00-\x1f]')
 
-CN_STATUS = {"uploading": "读取中", "uploaded": "待确认", "queued": "排队中", "running": "运行中",
-             "done": "已完成", "review": "待复核", "stopped": "已停止", "failed": "失败"}
+CN_STATUS = {"uploading": "读取中", "uploaded": "待确认", "needs_review": "待重新确认",
+             "queued": "排队中", "running": "运行中", "done": "已完成", "review": "待复核",
+             "stopped": "已停止", "failed": "失败", "deleted": "已归档"}
 CN_VERDICT = {"full": "完整可用", "degraded": "降级可用",
               "facts_only": "只出事实层", "blocked": "被拦下"}
 
@@ -74,6 +76,107 @@ def safe_name(name):
 
 def task_dir(task_id):
     return os.path.join(config.TASKS_DIR, task_id)
+
+
+def _path_in_tasks(path):
+    root = os.path.realpath(config.TASKS_DIR)
+    candidate = os.path.realpath(path)
+    try:
+        return os.path.commonpath([root, candidate]) == root
+    except ValueError:
+        return False
+
+
+def _save_uploads(task_id, uploads):
+    """保存追加文件，返回新文件路径和重复文件名。"""
+    workdir = task_dir(task_id)
+    reports_dir = os.path.join(workdir, config.REPORTS_DIRNAME)
+    os.makedirs(reports_dir, exist_ok=True)
+    existing = {os.path.basename(item.get('stored_path') or '')
+                for item in store.files_for(task_id)}
+    saved, duplicates = [], []
+    batch_digests = set()
+    for upload in uploads:
+        name = safe_name(upload.filename)
+        if not name.lower().endswith('.pdf'):
+            continue
+        stem, ext = os.path.splitext(name)
+        candidate = name
+        n = 2
+        while candidate in existing:
+            candidate = "%s_%d%s" % (stem, n, ext)
+            n += 1
+        path = os.path.join(reports_dir, candidate)
+        header = upload.stream.read(1024)
+        upload.stream.seek(0)
+        if b'%PDF-' not in header:
+            raise ValueError('文件不是可识别的 PDF，请重新上传。')
+        upload.save(path)
+        digest = config._sha256(path)
+        if digest in batch_digests or store.file_by_sha(task_id, digest):
+            os.remove(path)
+            duplicates.append(name)
+            continue
+        batch_digests.add(digest)
+        existing.add(candidate)
+        saved.append(path)
+    return saved, duplicates
+
+
+def _refresh_task_metadata(task_id, recs, workdir, status='needs_review'):
+    """重新识别任务全部文件，并保留用户已填的行情/分析师参数。"""
+    newest_annual = None
+    newest_any = None
+    for rec in recs:
+        if rec.get('blocking') or not rec.get('period'):
+            continue
+        if newest_any is None or rec['period'] > newest_any['period']:
+            newest_any = rec
+        if rec.get('kind') == 'annual' and (
+                newest_annual is None or rec['period'] > newest_annual['period']):
+            newest_annual = rec
+    interim_only = newest_annual is None
+    interim_note = None
+    if interim_only:
+        kinds = sorted({r.get('kind_cn') or '认不出' for r in recs})
+        interim_note = ('这批文件里没有年报（只有%s）。可以生成，但「年度数据」会整片留空，'
+                        '只有季报/半年报进「报告期历史数据」。要让绝对估值和相对估值出结果，'
+                        '还需要年报。' % ('、'.join(kinds) if kinds else '认不出的文件'))
+    shown = newest_annual or newest_any or {}
+    try:
+        pre = prefill.prefill(recs, workdir, config.cache_dir())
+    except Exception:
+        logger.exception('prefill_failed', extra={'task_id': task_id})
+        pre = {'total_shares_mn': None, 'float_shares_mn': None,
+               'stock_code': None, 'source': {}, 'financials': {}}
+    task = store.get_task(task_id)
+    options = store.get_options(task or {})
+    old_market = options.get('market') or {}
+    market = dict(old_market)
+    market['history'] = old_market.get('history') or {}
+    market['allow_missing_history'] = True
+    for key in ('total_shares_mn', 'float_shares_mn'):
+        if pre.get(key) is not None:
+            market[key] = pre[key]
+    options.update({
+        'company_name': shown.get('company') or task.get('company_name'),
+        'company_code': shown.get('code') or pre.get('stock_code') or task.get('company_code'),
+        'report_period': shown.get('period') or task.get('report_period'),
+        'market': market,
+        'market_source': dict(options.get('market_source') or {}, **(pre.get('source') or {})),
+        'financials': {str(k): v for k, v in (pre.get('financials') or {}).items()},
+        'interim_only': interim_only,
+        'interim_note': interim_note,
+        'analyst': options.get('analyst') or {},
+        'allow_incomplete_history': True,
+        'skip_accept': False,
+    })
+    store.update_task(task_id, company_name=options['company_name'],
+                      company_code=options['company_code'],
+                      report_period=options['report_period'], status=status,
+                      message='文件已更新，请确认后重新生成。')
+    store.set_options(task_id, options)
+    return options
 
 
 @app.before_request
@@ -128,10 +231,11 @@ def health():
 
 @app.route("/")
 def index():
+    show_archived = request.args.get('show_archived') == '1'
     return render_template("index.html",
-                           tasks=store.list_tasks(),
+                           tasks=store.list_tasks_filtered(include_deleted=show_archived),
                            template=config.find_template(),
-                           queue_size=worker.queue_size())
+                           queue_size=worker.queue_size(), show_archived=show_archived)
 
 
 @app.route("/tasks/<task_id>")
@@ -140,9 +244,15 @@ def task_page(task_id):
     if not task:
         abort(404)
     options = store.get_options(task)
+    runs = store.runs_for(task_id)
+    for run in runs:
+        try:
+            run['file_count'] = len(json.loads(run.get('files_snapshot_json') or '[]'))
+        except (TypeError, ValueError):
+            run['file_count'] = None
     return render_template("task.html", task=task,
                            files=store.files_for(task_id),
-                           options=options)
+                           options=options, runs=runs)
 
 
 @app.route("/api/meta")
@@ -216,12 +326,21 @@ def create_uploaded_task():
     newest_annual = None
     newest_any = None
     for rec in recs:
-        store.add_file(task_id, os.path.basename(rec["pdf"]), rec["pdf"],
-                       kind=rec.get("kind"), kind_cn=rec.get("kind_cn"),
-                       period=rec.get("period"), company=rec.get("company"),
-                       code=rec.get("code"),
-                       blocking=1 if rec.get("blocking") else 0,
-                       why=rec.get("why"))
+        added = store.add_file(task_id, os.path.basename(rec["pdf"]), rec["pdf"],
+                               kind=rec.get("kind"), kind_cn=rec.get("kind_cn"),
+                               period=rec.get("period"), company=rec.get("company"),
+                               code=rec.get("code"),
+                               blocking=1 if rec.get("blocking") else 0,
+                               why=rec.get("why"))
+        if added is False:
+            try:
+                os.remove(rec["pdf"])
+            except OSError:
+                pass
+    recs = [rec for rec in recs if os.path.isfile(rec.get("pdf") or "")]
+    newest_annual = None
+    newest_any = None
+    for rec in recs:
         if rec.get("blocking") or not rec.get("period"):
             continue
         if newest_any is None or rec["period"] > newest_any["period"]:
@@ -286,13 +405,84 @@ def create_uploaded_task():
                     "redirect": url_for("task_page", task_id=task_id)})
 
 
+@app.route("/api/tasks/<task_id>/files", methods=["POST"])
+def api_append_files(task_id):
+    """向历史任务追加 PDF，并重新识别整个任务的文件集合。"""
+    task = store.get_task(task_id)
+    if not task:
+        return jsonify(error='任务不存在。'), 404
+    if task.get('deleted_at') or task.get('status') == 'deleted':
+        return jsonify(error='已归档任务不能追加文件，请先恢复。'), 409
+    if task.get('status') in ('queued', 'running', 'uploading'):
+        return jsonify(error='任务正在生成，暂时不能追加文件。'), 409
+    uploads = [u for u in request.files.getlist('files') if u and u.filename]
+    if not uploads:
+        return jsonify(error='没有收到文件。'), 400
+    if shutil.disk_usage(config.DATA_DIR).free < (request.content_length or 0) + 100 * 1024 * 1024:
+        return jsonify(error='存储空间不足，请联系维护人员。'), 507
+    if not _upload_slot.acquire(blocking=False):
+        return jsonify(error='正在读取另一批文件，请稍后再上传。'), 409
+    g.task_id = task_id
+    try:
+        try:
+            saved, duplicates = _save_uploads(task_id, uploads)
+        except ValueError as exc:
+            return jsonify(error=str(exc), task_id=task_id), 400
+        if not saved:
+            return jsonify(error='没有新增文件。', duplicates=duplicates,
+                           task_id=task_id), 200
+        all_files = store.files_for(task_id)
+        paths = [item['stored_path'] for item in all_files
+                 if item.get('stored_path') and os.path.isfile(item['stored_path'])]
+        paths.extend(saved)
+        workdir = task.get('workdir') or task_dir(task_id)
+        try:
+            recs = runner.detect_files(paths, workdir)
+        except Exception:
+            logger.exception('append_file_detection_failed', extra={'task_id': task_id})
+            for path in saved:
+                try:
+                    os.remove(path)
+                except OSError:
+                    pass
+            return jsonify(error='文件识别失败，新增文件未保留。', task_id=task_id), 422
+        known = {os.path.realpath(item['stored_path']): item for item in all_files}
+        kept_recs = []
+        for rec in recs:
+            path = os.path.realpath(rec.get('pdf') or '')
+            fields = dict(kind=rec.get('kind'), kind_cn=rec.get('kind_cn'),
+                          period=rec.get('period'), company=rec.get('company'),
+                          code=rec.get('code'), blocking=1 if rec.get('blocking') else 0,
+                          why=rec.get('why'))
+            if path in known:
+                store.update_file(task_id, known[path]['stored_path'], **fields)
+            elif os.path.isfile(path):
+                added = store.add_file(task_id, os.path.basename(path), path, **fields)
+                if added is False:
+                    try:
+                        os.remove(path)
+                    except OSError:
+                        pass
+                    continue
+            if os.path.isfile(path):
+                kept_recs.append(rec)
+        recs = kept_recs
+        store.bump_files_revision(task_id)
+        options = _refresh_task_metadata(task_id, recs, workdir)
+        return jsonify(task_id=task_id, status='needs_review', duplicates=duplicates,
+                       added=len(saved), options=options)
+    finally:
+        _upload_slot.release()
+
+
 @app.route("/api/tasks/<task_id>")
 def api_task(task_id):
     task = store.get_task(task_id)
     if not task:
         return jsonify({"error": "任务不存在"}), 404
     public = {key: task.get(key) for key in ('id', 'run_id', 'status', 'step', 'total_steps',
-              'step_name', 'message', 'company_name', 'report_period', 'xlsm_name')}
+              'step_name', 'message', 'company_name', 'report_period', 'xlsm_name',
+              'files_revision', 'deleted_at')}
     terminal = task['status'] in ('done', 'review', 'failed', 'stopped')
     artifacts = runner.collect_artifacts(task.get('run_dir') or '') if terminal else {}
     public['has_model'] = bool(terminal and artifacts.get('xlsm_path'))
@@ -325,11 +515,49 @@ def api_task(task_id):
     return jsonify(public)
 
 
+@app.route("/api/tasks/<task_id>/runs")
+def api_runs(task_id):
+    if not store.get_task(task_id):
+        return jsonify(error='任务不存在。'), 404
+    runs = []
+    for run in store.runs_for(task_id):
+        item = {key: run.get(key) for key in (
+            'id', 'created_at', 'finished_at', 'status', 'run_dir', 'message',
+            'exit_code', 'duration_seconds', 'files_revision', 'output_sha256', 'is_latest')}
+        try:
+            item['file_count'] = len(json.loads(run.get('files_snapshot_json') or '[]'))
+        except (TypeError, ValueError):
+            item['file_count'] = None
+        runs.append(item)
+    return jsonify(runs=runs)
+
+
+@app.route("/api/tasks/<task_id>/runs/<run_id>")
+def api_run_detail(task_id, run_id):
+    task = store.get_task(task_id)
+    run = store.get_run(run_id)
+    if not task or not run or run.get('task_id') != task_id:
+        return jsonify(error='运行记录不存在。'), 404
+    item = {key: run.get(key) for key in (
+        'id', 'task_id', 'created_at', 'finished_at', 'status', 'run_dir',
+        'message', 'exit_code', 'duration_seconds', 'files_revision',
+        'output_sha256', 'is_latest')}
+    for field, default in (('files_snapshot_json', []), ('params_json', {})):
+        try:
+            item[field.removesuffix('_json')] = json.loads(
+                run.get(field) or json.dumps(default))
+        except (TypeError, ValueError):
+            item[field.removesuffix('_json')] = default
+    return jsonify(item)
+
+
 @app.route("/api/tasks/<task_id>/start", methods=["POST"])
 def api_start(task_id):
     task = store.get_task(task_id)
     if not task:
         return jsonify({"error": "任务不存在"}), 404
+    if task.get('deleted_at') or task.get('status') == 'deleted':
+        return jsonify(error='已归档任务不能生成，请先恢复。'), 409
     if task["status"] in ("queued", "running", "uploading"):
         return jsonify({"error": "这个任务已经在队列里了。"}), 409
 
@@ -459,10 +687,41 @@ def api_download(task_id):
         abort(404)
     artifacts = runner.collect_artifacts(task.get('run_dir') or '')
     path = artifacts['xlsm_path']
-    if not path:
+    if not path or not _path_in_tasks(path):
         return jsonify({"error": "这个任务没有产出 xlsm。"}), 404
     return send_file(path, as_attachment=True,
                      download_name=artifacts['xlsm_name'])
+
+
+@app.route("/api/tasks/<task_id>/runs/<run_id>/download")
+def api_run_download(task_id, run_id):
+    task = store.get_task(task_id)
+    run = store.get_run(run_id)
+    if not task or not run or run.get('task_id') != task_id:
+        abort(404)
+    run_dir = os.path.realpath(run.get('run_dir') or '')
+    if not run_dir or not _path_in_tasks(run_dir) or not os.path.isdir(run_dir):
+        return jsonify(error='运行结果目录不可用。'), 404
+    artifacts = runner.collect_artifacts(run_dir)
+    path = artifacts.get('xlsm_path')
+    if not path or not _path_in_tasks(path):
+        return jsonify(error='这个运行没有产出 xlsm。'), 404
+    return send_file(path, as_attachment=True, download_name=artifacts['xlsm_name'])
+
+
+@app.route("/api/tasks/<task_id>/archive", methods=["POST"])
+def api_archive_task(task_id):
+    ok, message = store.archive_task(task_id)
+    if not ok:
+        return jsonify(error=message), 409 if message and '运行' in message else 404
+    return jsonify(status='deleted', task_id=task_id)
+
+
+@app.route("/api/tasks/<task_id>/restore", methods=["POST"])
+def api_restore_task(task_id):
+    if not store.restore_task(task_id):
+        return jsonify(error='任务不存在或未归档。'), 404
+    return jsonify(status='restored', task_id=task_id)
 
 
 def selfcheck():

@@ -4,6 +4,7 @@
 每个连接用完即关；写操作用一把进程内锁串行化。
 """
 import json
+import hashlib
 import os
 import sqlite3
 import threading
@@ -36,7 +37,10 @@ CREATE TABLE IF NOT EXISTS tasks (
     xlsm_name     TEXT,
     log_tail      TEXT,
     params_json   TEXT,
-    options_json  TEXT
+    options_json  TEXT,
+    deleted_at    TEXT,
+    archived_status TEXT,
+    files_revision INTEGER DEFAULT 0
 );
 CREATE TABLE IF NOT EXISTS task_files (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -49,7 +53,11 @@ CREATE TABLE IF NOT EXISTS task_files (
     company     TEXT,
     code        TEXT,
     blocking    INTEGER DEFAULT 0,
-    why         TEXT
+    why         TEXT,
+    sha256      TEXT,
+    file_size   INTEGER,
+    added_at    TEXT,
+    active      INTEGER DEFAULT 1
 );
 CREATE INDEX IF NOT EXISTS idx_files_task ON task_files(task_id);
 CREATE TABLE IF NOT EXISTS task_runs (
@@ -61,7 +69,13 @@ CREATE TABLE IF NOT EXISTS task_runs (
     run_dir TEXT,
     message TEXT,
     exit_code INTEGER,
-    duration_seconds REAL
+    duration_seconds REAL,
+    files_revision INTEGER,
+    files_snapshot_json TEXT,
+    params_json TEXT,
+    output_sha256 TEXT,
+    is_latest INTEGER DEFAULT 0,
+    deleted_at TEXT
 );
 """
 
@@ -82,15 +96,59 @@ def init():
     with _LOCK, _conn() as c:
         c.executescript(SCHEMA)
         # 老库是 CREATE TABLE IF NOT EXISTS 建出来的，加字段只能靠 ALTER。
-        cols = {r["name"] for r in c.execute("PRAGMA table_info(tasks)")}
-        if "run_dir" not in cols:
-            c.execute("ALTER TABLE tasks ADD COLUMN run_dir TEXT")
-        if "run_id" not in cols:
-            c.execute("ALTER TABLE tasks ADD COLUMN run_id TEXT")
+        for table, fields in {
+            "tasks": {
+                "run_dir": "TEXT", "run_id": "TEXT", "deleted_at": "TEXT",
+                "archived_status": "TEXT", "files_revision": "INTEGER DEFAULT 0",
+            },
+            "task_files": {
+                "sha256": "TEXT", "file_size": "INTEGER", "added_at": "TEXT",
+                "active": "INTEGER DEFAULT 1",
+            },
+            "task_runs": {
+                "files_revision": "INTEGER", "files_snapshot_json": "TEXT",
+                "params_json": "TEXT", "output_sha256": "TEXT",
+                "is_latest": "INTEGER DEFAULT 0", "deleted_at": "TEXT",
+            },
+        }.items():
+            cols = {r["name"] for r in c.execute("PRAGMA table_info(%s)" % table)}
+            for name, definition in fields.items():
+                if name not in cols:
+                    c.execute("ALTER TABLE %s ADD COLUMN %s %s" %
+                              (table, name, definition))
+        c.execute("UPDATE tasks SET files_revision=0 WHERE files_revision IS NULL")
+        c.execute("UPDATE task_files SET active=1 WHERE active IS NULL")
+        c.execute("UPDATE task_files SET added_at=COALESCE(added_at, ?)", (_now(),))
+        rows = c.execute("SELECT id, stored_path FROM task_files "
+                         "WHERE sha256 IS NULL AND stored_path IS NOT NULL").fetchall()
+        for row in rows:
+            try:
+                digest = _sha256(row["stored_path"])
+                size = os.path.getsize(row["stored_path"])
+            except OSError:
+                continue
+            c.execute("UPDATE task_files SET sha256=?, file_size=? WHERE id=?",
+                      (digest, size, row["id"]))
+        try:
+            c.execute("CREATE INDEX IF NOT EXISTS idx_runs_task_created "
+                      "ON task_runs(task_id, created_at DESC)")
+            c.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_task_files_sha "
+                      "ON task_files(task_id, sha256) WHERE active=1 AND sha256 IS NOT NULL")
+        except sqlite3.IntegrityError:
+            # 极旧数据库可能已经有重复记录；查询去重仍可工作，后续追加不再制造新重复。
+            pass
 
 
 def _now():
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+
+def _sha256(path):
+    digest = hashlib.sha256()
+    with open(path, "rb") as handle:
+        for chunk in iter(lambda: handle.read(1 << 20), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def new_id():
@@ -127,30 +185,73 @@ def get_task(task_id):
 
 
 def list_tasks(limit=200):
+    return list_tasks_filtered(limit=limit, include_deleted=False)
+
+
+def list_tasks_filtered(limit=200, include_deleted=False):
     with _conn() as c:
-        rows = c.execute(
-            "SELECT * FROM tasks ORDER BY created_at DESC LIMIT ?", (limit,)
-        ).fetchall()
+        where = "" if include_deleted else "WHERE deleted_at IS NULL"
+        rows = c.execute("SELECT * FROM tasks %s ORDER BY created_at DESC LIMIT ?" % where,
+                         (limit,)).fetchall()
     return [dict(r) for r in rows]
 
 
 def add_file(task_id, orig_name, stored_path, kind=None, kind_cn=None,
              period=None, company=None, code=None, blocking=0, why=None):
+    digest = _sha256(stored_path)
+    size = os.path.getsize(stored_path)
     with _LOCK, _conn() as c:
+        duplicate = c.execute("SELECT id FROM task_files WHERE task_id=? AND sha256=? "
+                              "AND active=1", (task_id, digest)).fetchone()
+        if duplicate:
+            return False
         c.execute(
             "INSERT INTO task_files (task_id, orig_name, stored_path, kind, "
-            "kind_cn, period, company, code, blocking, why) "
-            "VALUES (?,?,?,?,?,?,?,?,?,?)",
+            "kind_cn, period, company, code, blocking, why, sha256, file_size, added_at, active) "
+            "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,1)",
             (task_id, orig_name, stored_path, kind, kind_cn, period, company,
-             code, int(blocking), why))
+             code, int(blocking), why, digest, size, _now()))
+    return True
+
+
+def file_by_sha(task_id, digest):
+    with _conn() as c:
+        row = c.execute("SELECT * FROM task_files WHERE task_id=? AND sha256=? "
+                        "AND active=1", (task_id, digest)).fetchone()
+    return dict(row) if row else None
+
+
+def update_file(task_id, stored_path, **fields):
+    if not fields:
+        return
+    fields["active"] = 1
+    cols = ", ".join("%s = ?" % key for key in fields)
+    with _LOCK, _conn() as c:
+        c.execute("UPDATE task_files SET %s WHERE task_id=? AND stored_path=?" % cols,
+                  list(fields.values()) + [task_id, stored_path])
 
 
 def files_for(task_id):
     with _conn() as c:
         rows = c.execute(
-            "SELECT * FROM task_files WHERE task_id = ? ORDER BY id", (task_id,)
+            "SELECT * FROM task_files WHERE task_id = ? AND active=1 ORDER BY id", (task_id,)
         ).fetchall()
     return [dict(r) for r in rows]
+
+
+def runs_for(task_id):
+    with _conn() as c:
+        rows = c.execute(
+            "SELECT * FROM task_runs WHERE task_id=? AND deleted_at IS NULL "
+            "ORDER BY created_at DESC", (task_id,)).fetchall()
+    return [dict(r) for r in rows]
+
+
+def get_run(run_id):
+    with _conn() as c:
+        row = c.execute("SELECT * FROM task_runs WHERE id=? AND deleted_at IS NULL",
+                        (run_id,)).fetchone()
+    return dict(row) if row else None
 
 
 def set_options(task_id, options):
@@ -178,20 +279,31 @@ def pending_count():
 def claim_task(task_id, options):
     run_id = uuid.uuid4().hex
     with _LOCK, _conn() as connection:
+        task_row = connection.execute(
+            "SELECT files_revision FROM tasks WHERE id=? AND deleted_at IS NULL",
+            (task_id,)).fetchone()
+        if not task_row:
+            return None
+        snapshot = [dict(row) for row in connection.execute(
+            "SELECT id,orig_name,stored_path,kind,kind_cn,period,company,code,sha256,file_size "
+            "FROM task_files WHERE task_id=? AND active=1 ORDER BY id", (task_id,)).fetchall()]
         result = connection.execute(
             "UPDATE tasks SET status='queued', step=0, step_name='排队中', "
             "run_id=?, run_dir=NULL, xlsm_path=NULL, xlsm_name=NULL, verdict=NULL, "
             "message=NULL, log_tail=NULL, updated_at=?, options_json=?, "
             "company_name=?, company_code=?, report_period=? "
-            "WHERE id=? AND status NOT IN ('queued','running','uploading')",
+            "WHERE id=? AND deleted_at IS NULL AND status NOT IN ('queued','running','uploading')",
             (run_id, _now(), json.dumps(options, ensure_ascii=False),
              options.get('company_name'), options.get('company_code'),
              options.get('report_period'), task_id))
         if result.rowcount != 1:
             return None
+        connection.execute("UPDATE task_runs SET is_latest=0 WHERE task_id=?", (task_id,))
         connection.execute(
-            "INSERT INTO task_runs (id,task_id,created_at,status) VALUES (?,?,?,?)",
-            (run_id, task_id, _now(), 'queued'))
+            "INSERT INTO task_runs (id,task_id,created_at,status,files_revision,"
+            "files_snapshot_json,params_json,is_latest) VALUES (?,?,?,?,?,?,?,1)",
+            (run_id, task_id, _now(), 'queued', task_row["files_revision"] or 0,
+             json.dumps(snapshot, ensure_ascii=False), json.dumps(options, ensure_ascii=False)))
     return run_id
 
 
@@ -217,3 +329,33 @@ def recover_interrupted():
             "UPDATE task_runs SET status='failed', message=?, finished_at=? "
             "WHERE status IN ('queued','running')", (message, _now()))
     return [dict(row) for row in rows]
+
+
+def bump_files_revision(task_id):
+    with _LOCK, _conn() as c:
+        c.execute("UPDATE tasks SET files_revision=COALESCE(files_revision,0)+1, "
+                  "updated_at=? WHERE id=?", (_now(), task_id))
+
+
+def archive_task(task_id):
+    with _LOCK, _conn() as c:
+        row = c.execute("SELECT status,deleted_at FROM tasks WHERE id=?", (task_id,)).fetchone()
+        if not row or row["deleted_at"]:
+            return False, "任务不存在或已归档"
+        if row["status"] in ("queued", "running", "uploading"):
+            return False, "任务正在运行，不能归档"
+        c.execute("UPDATE tasks SET deleted_at=?, archived_status=?, status='deleted', "
+                  "updated_at=? WHERE id=?", (_now(), row["status"], _now(), task_id))
+    return True, None
+
+
+def restore_task(task_id):
+    with _LOCK, _conn() as c:
+        row = c.execute("SELECT archived_status,deleted_at FROM tasks WHERE id=?",
+                        (task_id,)).fetchone()
+        if not row or not row["deleted_at"]:
+            return False
+        status = row["archived_status"] or "uploaded"
+        c.execute("UPDATE tasks SET deleted_at=NULL, status=?, archived_status=NULL, "
+                  "updated_at=? WHERE id=?", (status, _now(), task_id))
+    return True

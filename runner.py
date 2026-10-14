@@ -110,12 +110,17 @@ def detect_files(pdf_paths, workdir):
         raise RuntimeError("认料失败：%s" % tail[-800:])
     with io.open(out_path, encoding="utf-8") as fh:
         data = json.load(fh)
-    blocked = {b["pdf"]: b["why"] for b in data.get("blocking", [])}
+    blocked = {b["pdf"]: b["why"] for b in data.get("blocking", [])
+               if b.get("pdf")}
+    global_blocking = [b.get("why") for b in data.get("blocking", [])
+                       if not b.get("pdf") and b.get("why")]
     out = []
     for r in data.get("reports", []):
         rec = dict(r)
-        rec["blocking"] = r["pdf"] in blocked
-        rec["why"] = blocked.get(r["pdf"])
+        rec["blocking"] = bool(global_blocking) or r["pdf"] in blocked
+        reasons = ([blocked[r["pdf"]]] if r["pdf"] in blocked else [])
+        reasons.extend(global_blocking)
+        rec["why"] = "；".join(reasons) if reasons else None
         out.append(rec)
     return out
 
