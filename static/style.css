@@ -49,7 +49,9 @@ a.btnlink {
 a.btnlink:hover { border-color: var(--brand); color: var(--brand); }
 .secondary { background: #fff; color: var(--text); border: 1px solid var(--line); }
 .secondary:hover { border-color: var(--brand); color: var(--brand); }
-.archive-task { background: transparent; color: var(--err); padding: 2px 8px; margin-left: 8px; }
+.delete-task { background: transparent; color: var(--err); padding: 2px 8px; margin-left: 8px; }
+.danger { background: #fff; color: var(--err); border: 1px solid #fecaca; }
+.danger:hover { border-color: var(--err); }
 .append-form { margin-top: 14px; }
 .filelist { list-style: none; padding: 0; margin: 12px 0; }
 .filelist li { padding: 6px 0; border-bottom: 1px dashed var(--line); }

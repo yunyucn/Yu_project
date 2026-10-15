@@ -36,11 +36,7 @@
   </section>
 
   <section class="card">
-    <div class="row" style="justify-content:space-between">
-      <h2>历史任务</h2>
-      {% if show_archived %}<a class="btnlink" href="{{ url_for('index') }}">隐藏已归档</a>
-      {% else %}<a class="btnlink" href="{{ url_for('index', show_archived=1) }}">查看已归档</a>{% endif %}
-    </div>
+    <h2>历史任务</h2>
     {% if tasks %}<table>
       <thead>
         <tr><th>时间</th><th>公司</th><th>报告期</th><th>结果</th><th></th></tr>
@@ -54,13 +50,12 @@
           <td><span class="badge {{ t.status }}">{{ status_cn(t.status) }}</span></td>
           <td>
             <a href="{{ url_for('task_page', task_id=t.id) }}">打开</a>
-            {% if t.deleted_at %}<button type="button" class="restore-task" data-task="{{ t.id }}">恢复</button>
-            {% else %}<button type="button" class="archive-task" data-task="{{ t.id }}">归档</button>{% endif %}
+            <button type="button" class="delete-task" data-task="{{ t.id }}">删除</button>
           </td>
         </tr>
         {% endfor %}
       </tbody>
-    </table>{% else %}<p class="hint">鏆傛棤浠诲姟銆?/p>{% endif %}
+    </table>{% else %}<p class="hint">暂无任务。</p>{% endif %}
   </section>
 </main>
 

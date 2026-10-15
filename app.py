@@ -46,7 +46,7 @@ BAD_CHARS = re.compile(r'[\\/:*?"<>|\x00-\x1f]')
 
 CN_STATUS = {"uploading": "读取中", "uploaded": "待确认", "needs_review": "待重新确认",
              "queued": "排队中", "running": "运行中", "done": "已完成", "review": "待复核",
-             "stopped": "已停止", "failed": "失败", "deleted": "已归档"}
+             "stopped": "已停止", "failed": "失败", "deleted": "已删除"}
 CN_VERDICT = {"full": "完整可用", "degraded": "降级可用",
               "facts_only": "只出事实层", "blocked": "被拦下"}
 
@@ -231,11 +231,10 @@ def health():
 
 @app.route("/")
 def index():
-    show_archived = request.args.get('show_archived') == '1'
     return render_template("index.html",
-                           tasks=store.list_tasks_filtered(include_deleted=show_archived),
+                           tasks=store.list_tasks(),
                            template=config.find_template(),
-                           queue_size=worker.queue_size(), show_archived=show_archived)
+                           queue_size=worker.queue_size())
 
 
 @app.route("/tasks/<task_id>")
@@ -412,7 +411,7 @@ def api_append_files(task_id):
     if not task:
         return jsonify(error='任务不存在。'), 404
     if task.get('deleted_at') or task.get('status') == 'deleted':
-        return jsonify(error='已归档任务不能追加文件，请先恢复。'), 409
+        return jsonify(error='任务已删除，不能追加文件。'), 409
     if task.get('status') in ('queued', 'running', 'uploading'):
         return jsonify(error='任务正在生成，暂时不能追加文件。'), 409
     uploads = [u for u in request.files.getlist('files') if u and u.filename]
@@ -515,6 +514,43 @@ def api_task(task_id):
     return jsonify(public)
 
 
+@app.route("/api/tasks/<task_id>", methods=["DELETE"])
+def api_delete_task(task_id):
+    if not _upload_slot.acquire(blocking=False):
+        return jsonify(error='正在处理另一项文件操作，请稍后再删除。'), 409
+    try:
+        task = store.get_task(task_id)
+        if not task:
+            return jsonify(error='任务不存在。'), 404
+        workdir = os.path.realpath(task.get('workdir') or task_dir(task_id))
+        tasks_root = os.path.realpath(config.TASKS_DIR)
+        if workdir == tasks_root or not _path_in_tasks(workdir):
+            logger.error('task_delete_path_rejected', extra={'task_id': task_id,
+                         'workdir': workdir})
+            return jsonify(error='任务目录不在允许删除的范围内。'), 409
+        ok, message, stored_workdir = store.delete_task(task_id)
+        if not ok:
+            return jsonify(error=message), 409 if '运行' in message else 404
+        cleanup_warning = None
+        target = os.path.realpath(stored_workdir or workdir)
+        if target != tasks_root and _path_in_tasks(target):
+            try:
+                if os.path.isdir(target) and not os.path.islink(target):
+                    shutil.rmtree(target)
+                elif os.path.lexists(target):
+                    os.remove(target)
+            except OSError:
+                cleanup_warning = '任务记录已删除，但任务文件清理失败，请联系维护人员。'
+                logger.exception('task_delete_cleanup_failed', extra={'task_id': task_id,
+                               'workdir': target})
+        result = {'status': 'deleted', 'task_id': task_id}
+        if cleanup_warning:
+            result['warning'] = cleanup_warning
+        return jsonify(result)
+    finally:
+        _upload_slot.release()
+
+
 @app.route("/api/tasks/<task_id>/runs")
 def api_runs(task_id):
     if not store.get_task(task_id):
@@ -557,7 +593,7 @@ def api_start(task_id):
     if not task:
         return jsonify({"error": "任务不存在"}), 404
     if task.get('deleted_at') or task.get('status') == 'deleted':
-        return jsonify(error='已归档任务不能生成，请先恢复。'), 409
+        return jsonify(error='任务已删除，不能生成。'), 409
     if task["status"] in ("queued", "running", "uploading"):
         return jsonify({"error": "这个任务已经在队列里了。"}), 409
 
@@ -707,21 +743,6 @@ def api_run_download(task_id, run_id):
     if not path or not _path_in_tasks(path):
         return jsonify(error='这个运行没有产出 xlsm。'), 404
     return send_file(path, as_attachment=True, download_name=artifacts['xlsm_name'])
-
-
-@app.route("/api/tasks/<task_id>/archive", methods=["POST"])
-def api_archive_task(task_id):
-    ok, message = store.archive_task(task_id)
-    if not ok:
-        return jsonify(error=message), 409 if message and '运行' in message else 404
-    return jsonify(status='deleted', task_id=task_id)
-
-
-@app.route("/api/tasks/<task_id>/restore", methods=["POST"])
-def api_restore_task(task_id):
-    if not store.restore_task(task_id):
-        return jsonify(error='任务不存在或未归档。'), 404
-    return jsonify(status='restored', task_id=task_id)
 
 
 def selfcheck():

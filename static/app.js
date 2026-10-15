@@ -92,20 +92,14 @@
         });
     });
 
-    document.querySelectorAll('.archive-task').forEach(function (button) {
+    document.querySelectorAll('.delete-task').forEach(function (button) {
       button.addEventListener('click', function () {
         var id = button.dataset.task;
-        if (!window.confirm('归档这个历史任务？原始文件和生成结果会保留。')) return;
-        fetch('/api/tasks/' + id + '/archive', { method: 'POST' })
+        if (!window.confirm('删除这个历史任务？原始 PDF、生成结果和运行记录都会永久删除，且无法恢复。')) return;
+        button.disabled = true;
+        fetch('/api/tasks/' + id, { method: 'DELETE' })
           .then(readResponse).then(function () { window.location.reload(); })
-          .catch(function (err) { window.alert(err.message); });
-      });
-    });
-    document.querySelectorAll('.restore-task').forEach(function (button) {
-      button.addEventListener('click', function () {
-        fetch('/api/tasks/' + button.dataset.task + '/restore', { method: 'POST' })
-          .then(readResponse).then(function () { window.location.reload(); })
-          .catch(function (err) { window.alert(err.message); });
+          .catch(function (err) { button.disabled = false; window.alert(err.message); });
       });
     });
   }
@@ -113,12 +107,14 @@
   /* ---------------- 任务页 ---------------- */
   var body = document.body;
   var pageTaskId = body.dataset.task;
-  var standaloneRestoreBtn = document.getElementById('restoreBtn');
-  if (standaloneRestoreBtn && pageTaskId) {
-    standaloneRestoreBtn.addEventListener('click', function () {
-      fetch('/api/tasks/' + pageTaskId + '/restore', { method: 'POST' })
-        .then(readResponse).then(function () { window.location.reload(); })
-        .catch(function (err) { window.alert(err.message); });
+  var standaloneDeleteBtn = document.getElementById('deleteBtn');
+  if (standaloneDeleteBtn && pageTaskId) {
+    standaloneDeleteBtn.addEventListener('click', function () {
+      if (!window.confirm('删除这个任务？原始 PDF、生成结果和运行记录都会永久删除，且无法恢复。')) return;
+      standaloneDeleteBtn.disabled = true;
+      fetch('/api/tasks/' + pageTaskId, { method: 'DELETE' })
+        .then(readResponse).then(function () { window.location.href = '/'; })
+        .catch(function (err) { standaloneDeleteBtn.disabled = false; window.alert(err.message); });
     });
   }
   var startBtn = document.getElementById("startBtn");
@@ -137,6 +133,59 @@
     var polling = false;
     var blocked = startBtn.disabled;
     var sawRunning = false;   /* 这次打开页面时任务在跑，跑完才自动滚到结果 */
+    var runHistory = document.getElementById('runHistory');
+
+    function runStatus(status) {
+      return {
+        queued: '排队中', running: '运行中', done: '已完成', review: '待复核',
+        stopped: '已停止', failed: '失败'
+      }[status] || status || '—';
+    }
+
+    function renderRunHistory(runs) {
+      if (!runHistory) return;
+      var tbody = runHistory.querySelector('tbody');
+      if (!tbody) return;
+      if (!runs.length) {
+        tbody.innerHTML = '<tr><td colspan="5" class="hint">还没有生成记录。</td></tr>';
+        return;
+      }
+      tbody.innerHTML = runs.map(function (run) {
+        var duration = run.duration_seconds == null ? '—' : esc(run.duration_seconds) + ' 秒';
+        var download = run.run_dir ? '<a href="/api/tasks/' + encodeURIComponent(taskId) +
+          '/runs/' + encodeURIComponent(run.id) + '/download">下载此版本</a>' : '';
+        var latest = run.is_latest ? '（当前）' : '';
+        return '<tr><td>' + esc(run.created_at) + '</td><td><span class="badge ' +
+          esc(run.status) + '">' + esc(runStatus(run.status)) + '</span>' + latest +
+          '</td><td>' + esc(run.file_count == null ? '—' : run.file_count) +
+          '</td><td>' + duration + '</td><td>' + download + '</td></tr>';
+      }).join('');
+    }
+
+    function refreshRunHistory(expectedRunId, retries, waitForTerminal) {
+      if (!runHistory) return;
+      fetch('/api/tasks/' + encodeURIComponent(taskId) + '/runs', { cache: 'no-store' })
+        .then(readResponse).then(function (data) {
+          var runs = data.runs || [];
+          renderRunHistory(runs);
+          var expected = runs.filter(function (run) {
+            return run.id === expectedRunId;
+          })[0];
+          var terminal = expected && ['done', 'review', 'failed', 'stopped'].indexOf(expected.status) >= 0;
+          var ready = !expectedRunId || (expected && (!waitForTerminal || terminal));
+          if (!ready && retries > 0) {
+            window.setTimeout(function () {
+              refreshRunHistory(expectedRunId, retries - 1, waitForTerminal);
+            }, 300);
+          }
+        }).catch(function () {
+          if (retries > 0) {
+            window.setTimeout(function () {
+              refreshRunHistory(expectedRunId, retries - 1, waitForTerminal);
+            }, 500);
+          }
+        });
+    }
 
     var appendForm = document.getElementById('appendForm');
     if (appendForm) {
@@ -195,24 +244,6 @@
       });
     }
 
-    var archiveBtn = document.getElementById('archiveBtn');
-    if (archiveBtn) {
-      archiveBtn.addEventListener('click', function () {
-        if (!window.confirm('归档这个任务？原始文件和生成结果会保留。')) return;
-        fetch('/api/tasks/' + taskId + '/archive', { method: 'POST' })
-          .then(readResponse).then(function () { window.location.href = '/'; })
-          .catch(function (err) { startMsg.innerHTML = "<span class='alert alert-error'>" + esc(err.message) + '</span>'; });
-      });
-    }
-    var restoreBtn = document.getElementById('restoreBtn');
-    if (restoreBtn) {
-      restoreBtn.addEventListener('click', function () {
-        fetch('/api/tasks/' + taskId + '/restore', { method: 'POST' })
-          .then(readResponse).then(function () { window.location.reload(); })
-          .catch(function (err) { startMsg.innerHTML = "<span class='alert alert-error'>" + esc(err.message) + '</span>'; });
-      });
-    }
-
     function paint(t) {
       if (t.status === "uploaded") { progressWrap.style.display = "none"; return; }
       var total = t.total_steps || 11;
@@ -245,6 +276,7 @@
       } else {
         downloadLink.style.display = "none";
       }
+      refreshRunHistory(t.run_id, 6, true);
       // 结果在页面最底下。只在「这次眼看着它跑完」时滚过去：重新打开一个早就
       // 跑完的任务，用户多半是来看上面那张表的，自动滚到底会把人甩走。
       if (sawRunning && resultCard.scrollIntoView) {
@@ -314,6 +346,7 @@
         body: JSON.stringify(payload)
       }).then(readResponse)
         .then(function (res) {
+          refreshRunHistory(res.run_id, 4, false);
           progressWrap.style.display = "block";
           if (!timer) timer = setInterval(poll, 2000);
           poll();

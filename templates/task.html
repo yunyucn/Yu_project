@@ -14,8 +14,6 @@
 
 <main>
   {% set blocked = files | selectattr('blocking') | list %}
-  {% set archived = task.deleted_at %}
-  {% if archived %}<div class="alert alert-warn">这个任务已归档，只能查看历史结果；需要继续使用请点击页面底部“恢复任务”。</div>{% endif %}
   {% if blocked %}
   <div class="alert alert-error">
     <strong>有 {{ blocked|length }} 份文件对不上，不能开始</strong>
@@ -41,7 +39,7 @@
         {% endfor %}
       </tbody>
     </table>
-    {% if not archived %}<form id="appendForm" class="append-form">
+    <form id="appendForm" class="append-form">
       <div id="appendDrop" class="drop compact">
         <p>追加 PDF：拖到这里，或 <label class="link">点击选择文件
           <input type="file" id="appendInput" multiple accept=".pdf,application/pdf" hidden>
@@ -52,12 +50,12 @@
         <button type="submit" id="appendBtn">追加并重新识别</button>
         <span id="appendMsg" class="msg"></span>
       </div>
-    </form>{% endif %}
+    </form>
   </section>
 
   {% set market = options.get('market') or {} %}
 
-  {% if not archived %}<section class="card">
+  <section class="card">
     <h2>第二步 · 核对信息</h2>
     <div class="grid">
       <label class="f"><span>公司名称</span>
@@ -74,9 +72,9 @@
         <input type="number" step="any" id="float_shares_mn"
                value="{{ market.get('float_shares_mn') if market.get('float_shares_mn') is not none else '' }}"></label>
     </div>
-  </section>{% endif %}
+  </section>
 
-  {% if not archived %}<section class="card">
+  <section class="card">
     <h2>生成估值模型</h2>
     <p>历年股价用于比较历史估值，预测假设用于测算未来三年的结果。</p>
     <div class="row">
@@ -87,7 +85,7 @@
       <div class="bar"><i id="bar"></i></div>
       <p class="steps" id="stepText"></p>
     </div>
-  </section>{% endif %}
+  </section>
 
   <section class="card" id="resultCard" style="display:none">
     <h2>结果</h2>
@@ -117,8 +115,7 @@
       </tbody>
     </table>
     <div class="row" style="margin-top:16px">
-      {% if task.deleted_at %}<button type="button" id="restoreBtn" class="secondary">恢复任务</button>
-      {% else %}<button type="button" id="archiveBtn" class="secondary">归档任务</button>{% endif %}
+      <button type="button" id="deleteBtn" class="danger">删除任务</button>
     </div>
   </section>
 </main>

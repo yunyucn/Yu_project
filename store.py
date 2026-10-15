@@ -337,25 +337,15 @@ def bump_files_revision(task_id):
                   "updated_at=? WHERE id=?", (_now(), task_id))
 
 
-def archive_task(task_id):
+def delete_task(task_id):
+    """永久删除任务记录，返回任务目录；运行中的任务拒绝删除。"""
     with _LOCK, _conn() as c:
-        row = c.execute("SELECT status,deleted_at FROM tasks WHERE id=?", (task_id,)).fetchone()
-        if not row or row["deleted_at"]:
-            return False, "任务不存在或已归档"
+        row = c.execute("SELECT status, workdir FROM tasks WHERE id=?", (task_id,)).fetchone()
+        if not row:
+            return False, "任务不存在", None
         if row["status"] in ("queued", "running", "uploading"):
-            return False, "任务正在运行，不能归档"
-        c.execute("UPDATE tasks SET deleted_at=?, archived_status=?, status='deleted', "
-                  "updated_at=? WHERE id=?", (_now(), row["status"], _now(), task_id))
-    return True, None
-
-
-def restore_task(task_id):
-    with _LOCK, _conn() as c:
-        row = c.execute("SELECT archived_status,deleted_at FROM tasks WHERE id=?",
-                        (task_id,)).fetchone()
-        if not row or not row["deleted_at"]:
-            return False
-        status = row["archived_status"] or "uploaded"
-        c.execute("UPDATE tasks SET deleted_at=NULL, status=?, archived_status=NULL, "
-                  "updated_at=? WHERE id=?", (status, _now(), task_id))
-    return True
+            return False, "任务正在运行，不能删除", None
+        c.execute("DELETE FROM task_runs WHERE task_id=?", (task_id,))
+        c.execute("DELETE FROM task_files WHERE task_id=?", (task_id,))
+        c.execute("DELETE FROM tasks WHERE id=?", (task_id,))
+    return True, None, row["workdir"]
